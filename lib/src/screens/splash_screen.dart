@@ -6,14 +6,15 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
+    return Container(
+      color: Colors.white,
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ExtendedImage.asset('assets/imgs/apple.png'),
-            const SizedBox(height: 100.0,),
-            const CircularProgressIndicator(color: Colors.red,)
+            const SizedBox(height: 100.0),
+            const CircularProgressIndicator(color: Colors.red)
           ],
         ),
       ),
