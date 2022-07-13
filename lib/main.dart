@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'src/apple_app.dart';
 import 'src/screens/splash_screen.dart';
+import 'src/utils/logger.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,10 +27,10 @@ class MyApp extends StatelessWidget {
   StatelessWidget _splashLoadingWidget(AsyncSnapshot<Object> snapshot) {
     // future has 3 state, hasError, hasData, waiting
     if (snapshot.hasError) {
-      debugPrint('error occur while loading ~');
+      logger.d('error occur while loading ~');
       return const Text('Error Occur');
     } else if (snapshot.hasData) {
-      debugPrint('data is ${snapshot.data.toString()}');
+      logger.d('data is ${snapshot.data.toString()}');
       return const AppleApp();
     } else {
       return const SplashScreen();
