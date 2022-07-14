@@ -1,4 +1,4 @@
-import 'package:apple_market3/src/middleware/check_auth.dart';
+// import 'package:apple_market3/src/middleware/check_auth.dart';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,7 +22,7 @@ final _routerDelegate = BeamerDelegate(
   ],
   locationBuilder: BeamerLocationBuilder(beamLocations: [
     HomeLocation(),
-    AuthLocation(),// 이게 없으면 beamToNamed 이동시 오류 발생함
+    AuthLocation(), // 이게 없으면 beamToNamed 이동시 오류 발생함
   ]),
 );
 
@@ -44,8 +44,47 @@ class AppleApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Apple Market Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primarySwatch: Colors.red, // 이걸 대표로 설정하면 기본 분위기가 유사하게 적용
+        fontFamily: 'Dohyeon', // 배달의민족 도현체
+        hintColor: Colors.grey[350],
+        textTheme: const TextTheme(
+          headline3: TextStyle(
+            fontFamily: 'Dohyeon',
+            fontWeight: FontWeight.bold,
+            color: Colors.blue,
+          ),
+          button: TextStyle(color: Colors.white),
+          subtitle1: TextStyle(color: Colors.black87, fontSize: 15),
+          subtitle2: TextStyle(color: Colors.grey, fontSize: 13),
+          bodyText1: TextStyle(
+              color: Colors.black87,
+              fontSize: 12,
+              fontWeight: FontWeight.normal),
+          bodyText2: TextStyle(
+              color: Colors.black54, fontSize: 12, fontWeight: FontWeight.w100),
+        ),
+        // inputDecorationTheme: const InputDecorationTheme(
+        //   enabledBorder: UnderlineInputBorder(
+        //     borderSide: BorderSide(color: Colors.transparent),
+        //   ),
+        // ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+              backgroundColor: Colors.red,
+              primary: Colors.white,
+              minimumSize: const Size(10, 48)),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black87,
+          elevation: 2,
+          titleTextStyle: TextStyle(color: Colors.black87),
+          actionsIconTheme: IconThemeData(color: Colors.black87),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedItemColor: Colors.black87,
+          unselectedItemColor: Colors.black54,
+        ),
       ),
       getPages: getPages(),
     );
@@ -57,8 +96,47 @@ class AppleApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Apple Market Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primarySwatch: Colors.red, // 이걸 대표로 설정하면 기본 분위기가 유사하게 적용
+        fontFamily: 'Dohyeon', // 배달의민족 도현체
+        hintColor: Colors.grey[350],
+        textTheme: const TextTheme(
+          headline3: TextStyle(
+            fontFamily: 'Dohyeon',
+            fontWeight: FontWeight.bold,
+            color: Colors.red,
+          ),
+          button: TextStyle(color: Colors.white),
+          subtitle1: TextStyle(color: Colors.black87, fontSize: 15),
+          subtitle2: TextStyle(color: Colors.grey, fontSize: 13),
+          bodyText1: TextStyle(
+              color: Colors.black87,
+              fontSize: 12,
+              fontWeight: FontWeight.normal),
+          bodyText2: TextStyle(
+              color: Colors.black54, fontSize: 12, fontWeight: FontWeight.w100),
+        ),
+        // inputDecorationTheme: const InputDecorationTheme(
+        //   enabledBorder: UnderlineInputBorder(
+        //     borderSide: BorderSide(color: Colors.transparent),
+        //   ),
+        // ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+              backgroundColor: Colors.red,
+              primary: Colors.white,
+              minimumSize: const Size(10, 48)),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black87,
+          elevation: 2,
+          titleTextStyle: TextStyle(color: Colors.black87),
+          actionsIconTheme: IconThemeData(color: Colors.black87),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedItemColor: Colors.black87,
+          unselectedItemColor: Colors.black54,
+        ),
       ),
       routeInformationParser: BeamerParser(),
       routerDelegate: _routerDelegate,
