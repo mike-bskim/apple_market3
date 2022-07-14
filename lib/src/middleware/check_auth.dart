@@ -5,7 +5,7 @@ class CheckAuth extends GetMiddleware {
   @override
   int? get priority => 2;
 
-  bool isAuthenticated = true;
+  bool isAuthenticated = false;
 
   @override
   RouteSettings? redirect(String? route) {
