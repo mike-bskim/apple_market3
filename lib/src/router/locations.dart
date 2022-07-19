@@ -16,7 +16,7 @@ List<GetPage<dynamic>> getPages() {
     ),
     GetPage(
       name: '/auth',
-      page: () => const AuthScreen(),
+      page: () => AuthScreen(),
       transition: Transition.fadeIn,
     ),
     // GetPage(name: '/user/:uid', pages: () => const UserInfoPage()),
@@ -43,7 +43,7 @@ class HomeLocation extends BeamLocation<BeamState> {
 class AuthLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    return [const BeamPage(key: ValueKey(LOCATION_AUTH), child: AuthScreen())];
+    return [BeamPage(key: const ValueKey(LOCATION_AUTH), child: AuthScreen())];
   }
 
   @override

@@ -5,7 +5,9 @@ import '../../constants/common_size.dart';
 import '../../utils/logger.dart';
 
 class IntroPage extends StatelessWidget {
-  const IntroPage({Key? key}) : super(key: key);
+  final PageController pageController;
+
+  const IntroPage({Key? key, required this.pageController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,14 +16,16 @@ class IntroPage extends StatelessWidget {
     // var _orgContext = context;
     FocusScope.of(context).unfocus();
 
+    // 모바일 화면의 비율을 정할때 편한 위젯
     return LayoutBuilder(
       builder: (context, constraints) {
         Size size = MediaQuery.of(context).size;
 
-        final imgSize = size.width - 32;
+        final imgSize = size.width - padding_16 * 2;
         final sizeOfPosImg = imgSize * 0.1;
 
-        return SafeArea( // 상태바 아래부터 , 아래 버튼위로 위젯이 위치시킴
+        return SafeArea(
+          // 상태바 아래부터 , 아래 버튼위로 위젯이 위치시킴
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: padding_16),
             child: Column(
@@ -40,12 +44,16 @@ class IntroPage extends StatelessWidget {
                   child: Stack(
                     children: <Widget>[
                       ExtendedImage.asset('assets/imgs/carrot_intro.png'),
+                      // Stack 안에서만 사용 가능함
                       Positioned(
+                          // 가로 세로 길이 설정, 사이즈 설정
                           width: sizeOfPosImg,
                           height: sizeOfPosImg,
+                          // 왼쪽과 위쪽의 간격 설정
                           left: imgSize * 0.45,
                           top: imgSize * 0.45,
-                          child: ExtendedImage.asset('assets/imgs/carrot_intro_pos.png')),
+                          child: ExtendedImage.asset(
+                              'assets/imgs/carrot_intro_pos.png')),
                     ],
                   ),
                 ),
@@ -55,7 +63,7 @@ class IntroPage extends StatelessWidget {
                 ),
                 Text(
                   '사과 마켓은 동네 직거래 마켓이에요\n'
-                      '내 동네를 설정하고 시작해보세요',
+                  '내 동네를 설정하고 시작해보세요',
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
                 Column(
@@ -63,15 +71,20 @@ class IntroPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: padding_16),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: padding_16),
                       child: TextButton(
                         onPressed: () async {
                           // _goToNextPage(_orgContext);
                           // context.read<PageController>().animateToPage(1,
                           //     duration: const Duration(milliseconds: 500), curve: Curves.ease);
                           logger.d('on Intro page, text Button Clicked !!!');
+                          pageController.animateToPage(1,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.ease);
                         },
-                        style: TextButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
+                        style: TextButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor),
                         child: Text(
                           '내 동네 설정하고 시작하기',
                           style: Theme.of(context).textTheme.button,
