@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'start/address_page.dart';
+import 'start/auth_page.dart';
 import 'start/intro_page.dart';
 
-class AuthScreen extends StatelessWidget {
-  AuthScreen({Key? key}) : super(key: key);
+class StartScreen extends StatelessWidget {
+  StartScreen({Key? key}) : super(key: key);
 
   final PageController _pageController = PageController();
 
@@ -18,7 +19,7 @@ class AuthScreen extends StatelessWidget {
         children: <Widget>[
           IntroPage(pageController: _pageController),
           const AddressPage(),
-          Container(color: Colors.accents[4]),
+          const AuthPage(),
         ],
       ),
     );

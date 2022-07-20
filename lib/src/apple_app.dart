@@ -44,8 +44,10 @@ class AppleApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Apple Market Demo',
       theme: ThemeData(
-        primarySwatch: Colors.red, // 이걸 대표로 설정하면 기본 분위기가 유사하게 적용
-        fontFamily: 'Dohyeon', // 배달의민족 도현체
+        primarySwatch: Colors.red,
+        // 이걸 대표로 설정하면 기본 분위기가 유사하게 적용
+        fontFamily: 'Dohyeon',
+        // 배달의민족 도현체
         hintColor: Colors.grey[350],
         textTheme: const TextTheme(
           headline3: TextStyle(
@@ -96,8 +98,10 @@ class AppleApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Apple Market Demo',
       theme: ThemeData(
-        primarySwatch: Colors.red, // 이걸 대표로 설정하면 기본 분위기가 유사하게 적용
-        fontFamily: 'Dohyeon', // 배달의민족 도현체
+        primarySwatch: Colors.red,
+        // 이걸 대표로 설정하면 기본 분위기가 유사하게 적용
+        fontFamily: 'Dohyeon',
+        // 배달의민족 도현체
         hintColor: Colors.grey[350],
         textTheme: const TextTheme(
           headline3: TextStyle(
@@ -130,7 +134,8 @@ class AppleApp extends StatelessWidget {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black87,
           elevation: 2,
-          titleTextStyle: TextStyle(color: Colors.black87),
+          titleTextStyle: TextStyle(
+              color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 20),
           actionsIconTheme: IconThemeData(color: Colors.black87),
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(

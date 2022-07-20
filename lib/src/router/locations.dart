@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../middleware/check_auth.dart';
-import '../screens/auth_screen.dart';
+import '../screens/start_screen.dart';
 import '../screens/home_screen.dart';
 
 // GETx 관련
@@ -16,7 +16,7 @@ List<GetPage<dynamic>> getPages() {
     ),
     GetPage(
       name: '/auth',
-      page: () => AuthScreen(),
+      page: () => StartScreen(),
       transition: Transition.fadeIn,
     ),
     // GetPage(name: '/user/:uid', pages: () => const UserInfoPage()),
@@ -43,7 +43,7 @@ class HomeLocation extends BeamLocation<BeamState> {
 class AuthLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    return [BeamPage(key: const ValueKey(LOCATION_AUTH), child: AuthScreen())];
+    return [BeamPage(key: const ValueKey(LOCATION_AUTH), child: StartScreen())];
   }
 
   @override
