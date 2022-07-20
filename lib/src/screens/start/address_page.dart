@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/common_size.dart';
-import '../../utils/logger.dart';
+// import '../../utils/logger.dart';
 
 class AddressPage extends StatefulWidget {
   const AddressPage({Key? key}) : super(key: key);
@@ -27,7 +27,7 @@ class _AddressPageState extends State<AddressPage> {
 
   @override
   Widget build(BuildContext context) {
-    logger.d("AddressPage >> build");
+    debugPrint(">>> build from AddressPage");
 
     return SafeArea(
       // padding 대신에 minimum 으로 설정 가능, 위/아래 글씨가 잘리는것도 방지하자
@@ -75,7 +75,7 @@ class _AddressPageState extends State<AddressPage> {
               padding: const EdgeInsets.symmetric(vertical: padding_16),
               itemCount: 30,
               itemBuilder: (context, index) {
-                debugPrint('index: $index');
+                // debugPrint('index: $index');
                 return ListTile(
                   leading: const Icon(Icons.image_aspect_ratio),
                   trailing: ExtendedImage.asset('assets/imgs/apple.jpg'),

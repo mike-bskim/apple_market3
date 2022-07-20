@@ -1,7 +1,9 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/common_size.dart';
+import '../../states/user_state.dart';
 import '../../utils/logger.dart';
 
 class IntroPage extends StatelessWidget {
@@ -11,8 +13,12 @@ class IntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // logger.d("IntroPage >> build");
-    // logger.d('current user state: ${context.read<UserProvider>().userState}');
+    debugPrint(">>> build from IntroPage");
+    if (routerType == RouterType.getX){
+      debugPrint('** current user state(GetX): ${UserController.to.userState}');
+    } else {
+      debugPrint('** current user state(Provider): ${context.read<UserProvider>().userState}');
+    }
     // var _orgContext = context;
     FocusScope.of(context).unfocus();
 

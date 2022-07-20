@@ -1,9 +1,13 @@
+// import 'package:beamer/beamer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/common_size.dart';
-import '../../utils/logger.dart';
+import '../../states/user_state.dart';
+// import '../start_screen.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -36,7 +40,7 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("AuthPage >> build");
+    debugPrint(">>> build from AuthPage");
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -105,7 +109,8 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                     TextButton(
                         onPressed: () async {
-                          debugPrint('_verificationStatus: $_verificationStatus');
+                          debugPrint(
+                              '_verificationStatus: $_verificationStatus');
                           // _getAddress();
                           FocusScope.of(context).unfocus();
                           if (_verificationStatus ==
@@ -168,8 +173,8 @@ class _AuthPageState extends State<AuthPage> {
                               });
                             }
                           }
-                          debugPrint('_verificationStatus: $_verificationStatus');
-
+                          debugPrint(
+                              '_verificationStatus: $_verificationStatus');
                         },
                         // 검증상태에 따라서 버튼의 문자열을 변경하여 동작중임을 표시함
                         child: _verificationStatus ==
@@ -218,11 +223,13 @@ class _AuthPageState extends State<AuthPage> {
                       height: getVerificationBtnHeight(_verificationStatus),
                       child: TextButton(
                           onPressed: () {
-                            debugPrint('_verificationStatus(onPressed): $_verificationStatus');
+                            debugPrint(
+                                '_verificationStatus(onPressed): $_verificationStatus');
                             FocusScope.of(context).unfocus();
                             // 인증 진행중
                             attemptVarify(context);
-                            debugPrint('_verificationStatus(onPressed): $_verificationStatus');
+                            debugPrint(
+                                '_verificationStatus(onPressed): $_verificationStatus');
                           },
                           // 검증상태에 따라서 버튼의 문자열을 변경하여 동작중임을 표시함
                           child: _verificationStatus ==
@@ -289,15 +296,22 @@ class _AuthPageState extends State<AuthPage> {
     // // Create a PhoneAuthCredential with the code
 
     // 강제 딜레이 추가
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
 
     setState(() {
       // 인증 완료
       _verificationStatus = VerificationStatus.verificationDone;
     });
-    debugPrint('_verificationStatus(attemptVarify): $_verificationStatus');
 
-    // context.read<UserProvider>().setUserAuth(true);
+    if(routerType == RouterType.beamer){
+      context.read<UserProvider>().setUserAuth(true);
+      debugPrint('*** userState(attemptVarify): ${context.read<UserProvider>().userState}');
+    } else {
+      UserController.to.setUserAuth(true);
+      Get.toNamed('/');
+    }
+
+    debugPrint('_verificationStatus(attemptVarify): $_verificationStatus');
   }
 
 // _getAddress() async {

@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       return const Text('Error Occur');
     } else if (snapshot.hasData) {
       // logger.d('data is ${snapshot.data.toString()}');
-      return const AppleApp();
+      return AppleApp();
     } else {
       return const SplashScreen();
     }
