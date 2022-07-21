@@ -308,7 +308,6 @@ class _AuthPageState extends State<AuthPage> {
       debugPrint('*** userState(attemptVarify): ${context.read<UserProvider>().userState}');
     } else {
       UserController.to.setUserAuth(true);
-      Get.toNamed('/');
     }
 
     debugPrint('_verificationStatus(attemptVarify): $_verificationStatus');

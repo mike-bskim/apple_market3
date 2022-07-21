@@ -14,11 +14,11 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint(">>> build from IntroPage");
-    if (routerType == RouterType.getX){
-      debugPrint('** current user state(GetX): ${UserController.to.userState}');
-    } else {
-      debugPrint('** current user state(Provider): ${context.read<UserProvider>().userState}');
-    }
+    // if (routerType == RouterType.getX){
+    //   debugPrint('** current user state(GetX): ${UserController.to.userState}');
+    // } else {
+    //   debugPrint('** current user state(Provider): ${context.read<UserProvider>().userState}');
+    // }
     // var _orgContext = context;
     FocusScope.of(context).unfocus();
 

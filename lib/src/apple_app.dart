@@ -11,24 +11,30 @@ import 'states/user_state.dart';
 
 // beamer 관련
 final _routerDelegate = BeamerDelegate(
+  initialPath: '/',
+  locationBuilder: BeamerLocationBuilder(
+    beamLocations: [
+      HomeLocation(),
+      AuthLocation(), // 이게 없으면 beamToNamed 이동시 오류 발생함
+    ],
+  ),
   guards: [
     BeamGuard(
       // '/' 루트 페이지로 이동을 시도하기 전에 check 를 확인하고
       // check 의 리턴값이 ture 면 계속 진행(루트 페이지/HomeScreen() 으로 이동)
       // check 의 리턴값이 false 면 beamToNamed 으로 이동, '/auth'(AuthLocation) 으로 이동
       pathPatterns: ['/'],
+      // guardNonMatching: true,
       check: (context, location) {
-        return context.watch<UserProvider>().userState;
+        debugPrint(
+            'userState: ${context.read<UserProvider>().userState.toString()}');
+        return context.read<UserProvider>().userState;
         // return context.watch<UserNotifier>().user != null;
       },
       beamToNamed: (origin, target) => '/auth',
-      // showPage: BeamPage(child: StartScreen()),
+      // showPage: BeamPage(key: const ValueKey(LOCATION_AUTH), child: StartScreen()),
     )
   ],
-  locationBuilder: BeamerLocationBuilder(beamLocations: [
-    HomeLocation(),
-    AuthLocation(), // 이게 없으면 beamToNamed 이동시 오류 발생함
-  ]),
 );
 
 class AppleApp extends StatelessWidget {
@@ -112,6 +118,8 @@ class AppleApp extends StatelessWidget {
         theme: themeData,
         routeInformationParser: BeamerParser(),
         routerDelegate: _routerDelegate,
+        // backButtonDispatcher:
+        //     BeamerBackButtonDispatcher(delegate: _routerDelegate),
       ),
     );
   }

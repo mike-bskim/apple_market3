@@ -30,7 +30,12 @@ const LOCATION_AUTH = 'auth';
 class HomeLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    return [const BeamPage(key: ValueKey(LOCATION_HOME), child: HomeScreen())];
+    return [
+      const BeamPage(
+          key: ValueKey(LOCATION_HOME),
+          title: LOCATION_HOME,
+          child: HomeScreen()),
+    ];
   }
 
   // 페이지 이동은 아래 2가지로 가능한데, 2번째는 pathPatterns => ['/'] 설정을 근거로 가능
@@ -43,7 +48,9 @@ class HomeLocation extends BeamLocation<BeamState> {
 class AuthLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    return [BeamPage(key: const ValueKey(LOCATION_AUTH), child: StartScreen())];
+    return [
+      BeamPage(key: const ValueKey(LOCATION_AUTH), child: StartScreen()),
+    ];
   }
 
   @override

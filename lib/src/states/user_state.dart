@@ -10,6 +10,8 @@ class UserController extends GetxController {
 
   void setUserAuth(bool authState) {
     _userLoggedIn(authState);
+    // auth_page 에서 여기로 이동
+    Get.offAllNamed('/');
   }
 }
 
