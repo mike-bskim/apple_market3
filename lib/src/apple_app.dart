@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'bindings/init_binding.dart';
 import 'constants/common_size.dart';
 import 'router/locations.dart';
-import 'screens/start_screen.dart';
 import 'states/user_state.dart';
 
 // beamer 관련

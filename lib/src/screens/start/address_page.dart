@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/common_size.dart';
+import 'address_service.dart';
 // import '../../utils/logger.dart';
 
 class AddressPage extends StatefulWidget {
@@ -61,7 +62,15 @@ class _AddressPageState extends State<AddressPage> {
               _isGettingLocation ? '위치 찾는중 ~~' : '현재위치 찾기',
               style: Theme.of(context).textTheme.button,
             ),
-            onPressed: () {}, //myLocation,
+            onPressed: () {
+              final text = _addressController.text;
+              if(text.isNotEmpty){
+                debugPrint('address page >> clicked ~~ $text');
+                FocusScope.of(context).unfocus();
+                AddressService().searchAddressByStr(text);
+              }
+
+            }, //myLocation,
             icon: _isGettingLocation
                 ? const SizedBox(
                     height: 20,

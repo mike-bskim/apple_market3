@@ -1,9 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../constants/common_size.dart';
-import '../../states/user_state.dart';
 import '../../utils/logger.dart';
 
 class IntroPage extends StatelessWidget {

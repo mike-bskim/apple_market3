@@ -1,13 +1,9 @@
-// import 'package:beamer/beamer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
-import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 import '../../constants/common_size.dart';
 import '../../states/user_state.dart';
-// import '../start_screen.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -304,8 +300,8 @@ class _AuthPageState extends State<AuthPage> {
     });
 
     if(routerType == RouterType.beamer){
-      context.read<UserProvider>().setUserAuth(true);
-      debugPrint('*** userState(attemptVarify): ${context.read<UserProvider>().userState}');
+      // context.read<UserProvider>().setUserAuth(true);
+      // debugPrint('*** userState(attemptVarify): ${context.read<UserProvider>().userState}');
     } else {
       UserController.to.setUserAuth(true);
     }
