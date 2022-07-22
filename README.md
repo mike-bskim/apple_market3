@@ -6,6 +6,8 @@ A new Flutter project.
 
 환경은 flutter 3 버전입니다.
 
+ListView 데이터 적용.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

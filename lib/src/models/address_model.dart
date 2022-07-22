@@ -43,6 +43,11 @@ class Results {
         "common": common.toJson(),
         "juso": List<dynamic>.from(juso.map((x) => x.toJson())),
       };
+
+  @override
+  String toString() {
+    return 'Results{common: $common, juso: $juso}';
+  }
 }
 
 class Common {
@@ -200,6 +205,12 @@ class Juso {
         "relJibun": relJibun,
         "hemdNm": hemdNm,
       };
+
+  @override
+  String toString() {
+    return 'Juso{roadAddr: $roadAddr, roadAddrPart1: $roadAddrPart1, roadAddrPart2: $roadAddrPart2, jibunAddr: $jibunAddr, engAddr: $engAddr, zipNo: $zipNo, admCd: $admCd, rnMgtSn: $rnMgtSn, bdMgtSn: $bdMgtSn, detBdNmList: $detBdNmList, bdNm: $bdNm, bdKdcd: $bdKdcd, siNm: $siNm, sggNm: $sggNm, emdNm: $emdNm, liNm: $liNm, rn: $rn, udrtYn: $udrtYn, buldMnnm: $buldMnnm, buldSlno: $buldSlno, mtYn: $mtYn, lnbrMnnm: $lnbrMnnm, lnbrSlno: $lnbrSlno, emdNo: $emdNo, hstryYn: $hstryYn, relJibun: $relJibun, hemdNm: $hemdNm}';
+  }
+
 }
 /*
 {

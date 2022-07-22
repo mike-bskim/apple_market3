@@ -1,13 +1,14 @@
-import 'package:apple_market3/src/Models/address_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../../../keys.dart';
+import '../../models/address_model.dart';
 import '../../utils/logger.dart';
 
 class AddressService {
+
   // string -> json(이부분은 fltter에서 자동처리함) -> object
-  void searchAddressByStr(String text) async {
+  Future<AddressModel> searchAddressByStr(String text) async {
     // final formData = {
     //   'key': vWorldKey,
     //   'request': 'search',
@@ -34,34 +35,15 @@ class AddressService {
 
     AddressModel addressModel = AddressModel.fromJson(resp.data);
 
-    debugPrint(addressModel.results.common.toJson().toString());
-    debugPrint(addressModel.results.juso.length.toString());
-    debugPrint(addressModel.results.juso[0].toJson().toString());
-    logger.d(resp.data is Map);
+    debugPrint(addressModel.results.common.toString());
+    debugPrint(addressModel.results.juso[0].toString());
+    // logger.d(resp.data is Map);
+
+    return addressModel;
   }
 
 // // string -> json(이부분은 fltter에서 자동처리함) -> object
-// Future<AddressModel> searchAddressByStr(String text) async {
-//
-//   final formData = {
-//     'key':vWorldKey,
-//     'request':'search',
-//     'type':'ADDRESS',
-//     'category':'ROAD',
-//     'query':text,
-//     'size':30,
-//   };
-//
-//   var resp = await Dio().get('http://api.vworld.kr/req/search', queryParameters: formData)
-//       .catchError((e){
-//     logger.e(e.message);
-//   });
-//
-//   AddressModel addressModel = AddressModel.fromJson(resp.data['response']);
-//
-//   return addressModel;
-// }
-//
+
 // Future<List<AddressModelXY>> findAddressByCoordinate({required double log, required double lat}) async {
 //
 //   List<Map<String, dynamic>> formData = <Map<String, dynamic>>[];

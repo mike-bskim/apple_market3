@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/common_size.dart';
+import '../../models/address_model.dart';
 import 'address_service.dart';
-// import '../../utils/logger.dart';
 
 class AddressPage extends StatefulWidget {
   const AddressPage({Key? key}) : super(key: key);
@@ -16,7 +16,8 @@ class AddressPage extends StatefulWidget {
 class _AddressPageState extends State<AddressPage> {
   final TextEditingController _addressController = TextEditingController();
 
-  // AddressModel? _addressModel;
+  AddressModel? _addressModel;
+
   // final List<AddressModelXY> _addressModelXYList = [];
   final _isGettingLocation = false;
 
@@ -62,15 +63,7 @@ class _AddressPageState extends State<AddressPage> {
               _isGettingLocation ? '위치 찾는중 ~~' : '현재위치 찾기',
               style: Theme.of(context).textTheme.button,
             ),
-            onPressed: () {
-              final text = _addressController.text;
-              if(text.isNotEmpty){
-                debugPrint('address page >> clicked ~~ $text');
-                FocusScope.of(context).unfocus();
-                AddressService().searchAddressByStr(text);
-              }
-
-            }, //myLocation,
+            onPressed: () {}, //myLocation,
             icon: _isGettingLocation
                 ? const SizedBox(
                     height: 20,
@@ -82,14 +75,21 @@ class _AddressPageState extends State<AddressPage> {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: padding_16),
-              itemCount: 30,
+              itemCount: (_addressModel == null)
+                  ? 0
+                  : _addressModel!.results.juso.length,
               itemBuilder: (context, index) {
                 // debugPrint('index: $index');
+                if (_addressModel == null) {
+                  return Container();
+                }
+                var subAddress = _addressModel!.results.juso[index].jibunAddr.split(' ');
+                debugPrint('[$index]  ${subAddress.toString()}');
                 return ListTile(
-                  leading: const Icon(Icons.image_aspect_ratio),
-                  trailing: ExtendedImage.asset('assets/imgs/apple.jpg'),
-                  title: Text('address $index'),
-                  subtitle: Text('address $index'),
+                  // leading: const Icon(Icons.image_aspect_ratio),
+                  // trailing: ExtendedImage.asset('assets/imgs/apple.jpg'),
+                  title: Text(_addressModel!.results.juso[index].roadAddrPart1),
+                  subtitle: Text('${subAddress[2]} ${subAddress[3]}'),
                 );
               },
             ),
@@ -173,20 +173,20 @@ class _AddressPageState extends State<AddressPage> {
 
   void onClickTextField(text) async {
     // _addressModelXYList.clear();
-    // _addressModel = await AddressService().searchAddressByStr(text);
+    _addressModel = await AddressService().searchAddressByStr(text);
     setState(() {});
   }
 
-  // void onClickSearchAddress() async {
-  //   final text = _addressController.text;
-  //   logger.d('text:$text');
-  //   // if (text.isNotEmpty) {
-  //   //   FocusScope.of(context).unfocus();
-  //   //   _addressModel = await AddressService().searchAddressByStr(text);
-  //   //   setState(() {});
-  //   // }
-  //   logger.d('address_page >> on Text Button Clicked !!!');
-  // }
+// void onClickSearchAddress() async {
+//   final text = _addressController.text;
+//   logger.d('text:$text');
+//   // if (text.isNotEmpty) {
+//   //   FocusScope.of(context).unfocus();
+//   //   _addressModel = await AddressService().searchAddressByStr(text);
+//   //   setState(() {});
+//   // }
+//   logger.d('address_page >> on Text Button Clicked !!!');
+// }
 
 // void myLocation() async {
 //   _addressModel = null;
