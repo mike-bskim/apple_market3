@@ -6,7 +6,7 @@ A new Flutter project.
 
 환경은 flutter 3 버전입니다.
 
-ListView 데이터 적용.
+found address on the list 까지
 
 ## Getting Started
 

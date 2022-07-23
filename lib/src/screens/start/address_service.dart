@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 
 import '../../../keys.dart';
 import '../../models/address_model.dart';
@@ -35,14 +35,14 @@ class AddressService {
 
     AddressModel addressModel = AddressModel.fromJson(resp.data);
 
-    debugPrint(addressModel.results.common.toString());
-    debugPrint(addressModel.results.juso[0].toString());
+    // debugPrint(addressModel.results.common.toString());
+    // debugPrint(addressModel.results.juso[0].toString());
     // logger.d(resp.data is Map);
 
     return addressModel;
   }
 
-// // string -> json(이부분은 fltter에서 자동처리함) -> object
+// // string -> json(이부분은 fltter에서 자동처리함) -> object, log=x, lat=y
 
 // Future<List<AddressModelXY>> findAddressByCoordinate({required double log, required double lat}) async {
 //
@@ -61,7 +61,7 @@ class AddressService {
 //       'key':vWorldKey,
 //       'service':'address',
 //       'request':'getAddress',
-//       'type':'PARCEL',
+//       'type':'PARCEL', /// 'BOTH'
 //       'point':'${log+0.01*x},${lat+0.01*y}',
 //     });
 //   }
