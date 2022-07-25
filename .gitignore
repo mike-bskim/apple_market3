@@ -32,6 +32,8 @@ migrate_working_dir/
 .pub/
 /build/
 /lib/keys.dart
+/android/app/src/main/AndroidManifest.xml
+/lib/src/models/place_model.dart
 
 # Web related
 lib/generated_plugin_registrant.dart
