@@ -24,6 +24,7 @@ List<GetPage<dynamic>> getPages() {
 }
 
 // ********************** 이하는 Beamer 관련
+// ignore_for_file: constant_identifier_names
 const LOCATION_HOME = 'home';
 const LOCATION_AUTH = 'auth';
 

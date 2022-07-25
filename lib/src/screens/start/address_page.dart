@@ -1,13 +1,14 @@
-// import 'package:extended_image/extended_image.dart';
-import 'package:apple_market3/src/models/address_from_location_model.dart';
-import 'package:apple_market3/src/models/location_from_address_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../constants/common_size.dart';
+import '../../constants/shared_pref_key.dart';
+import '../../models/address_from_location_model.dart';
 import '../../models/address_model.dart';
+import '../../models/location_from_address_model.dart';
 import 'address_service.dart';
 import 'google_map_service.dart';
 
@@ -100,8 +101,7 @@ class _AddressPageState extends State<AddressPage> {
 
 // 디바이스의 현재 GPS 위치 리턴, 현재는 가짜 위치를 사용중
   Future<void> _getGPSLocation() async {
-    position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
     // fake GPS, 현재는 가짜 위치를 사용중
     position = fakePosition;
@@ -130,11 +130,9 @@ class _AddressPageState extends State<AddressPage> {
                 color: Colors.grey,
               ),
               // 아이콘 주변 공간을 조절 가능
-              prefixIconConstraints:
-                  const BoxConstraints(minWidth: 24, maxHeight: 24),
+              prefixIconConstraints: const BoxConstraints(minWidth: 24, maxHeight: 24),
               // 문자 입력 박스의 아웃라인 설정
-              border: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey)),
+              border: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
               // focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
               hintText: '도로명으로 검색...',
               hintStyle: TextStyle(color: Theme.of(context).hintColor),
@@ -153,38 +151,35 @@ class _AddressPageState extends State<AddressPage> {
             // 로딩중일때는 다른 아이콘을 표시함
             icon: _isGettingLocation
                 ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(color: Colors.white))
-                : const Icon(CupertinoIcons.compass,
-                    color: Colors.white, size: 20),
+                    height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white))
+                : const Icon(CupertinoIcons.compass, color: Colors.white, size: 20),
           ),
 //도로명 검색 결과 표시,
           if (_addressModel != null)
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: padding_16),
-                itemCount: (_addressModel == null)
-                    ? 0
-                    : _addressModel!.results.juso.length,
+                itemCount: (_addressModel == null) ? 0 : _addressModel!.results.juso.length,
                 itemBuilder: (context, index) {
                   if (_addressModel == null) {
                     return Container();
                   }
-                  var subAddress =
-                      _addressModel!.results.juso[index].jibunAddr.split(' ');
+                  // 동정보, 지번 정보 추출하기 위함
+                  var subAddress = _addressModel!.results.juso[index].jibunAddr.split(' ');
                   return ListTile(
                     onTap: () async {
                       // 주소를 좌표로 변환하는 함수
-                      myLocation =
-                          await GoogleMapServices.getLocationFromAddress(
-                              _addressModel!.results.juso[index].roadAddrPart1);
+                      myLocation = await GoogleMapServices.getLocationFromAddress(
+                          _addressModel!.results.juso[index].roadAddrPart1);
                       debugPrint(myLocation!.results[0].formattedAddress);
-                      debugPrint(
-                          myLocation!.results[0].geometry.location.toString());
+                      debugPrint(myLocation!.results[0].geometry.location.toString());
+                      _saveAddressOnSharedPreference(
+                        _addressModel!.results.juso[index].roadAddrPart1,
+                        myLocation!.results[0].geometry.location.lat,
+                        myLocation!.results[0].geometry.location.lng,
+                      );
                     },
-                    title:
-                        Text(_addressModel!.results.juso[index].roadAddrPart1),
+                    title: Text(_addressModel!.results.juso[index].roadAddrPart1),
                     subtitle: Text('${subAddress[2]} ${subAddress[3]}'),
                   );
                 },
@@ -235,24 +230,21 @@ class _AddressPageState extends State<AddressPage> {
                     //_addressModelXYList[index].results == null ||
                     return Container();
                   }
-                  var zipcode = _addressModelXYList[index]
-                      .results[0]
-                      .addressComponents
-                      .length;
+                  var zipcode = _addressModelXYList[index].results[0].addressComponents.length;
                   var shortAddress = _addressModelXYList[index]
                       .results[0]
                       .formattedAddress
                       .replaceFirst('대한민국 ', '');
                   return ListTile(
                     onTap: () {
-                      debugPrint(_addressModelXYList[index]
-                          .results[0]
-                          .formattedAddress);
-                      debugPrint(_addressModelXYList[index]
-                          .results[0]
-                          .geometry
-                          .location
-                          .toString());
+                      debugPrint(_addressModelXYList[index].results[0].formattedAddress);
+                      debugPrint(
+                          _addressModelXYList[index].results[0].geometry.location.toString());
+                      _saveAddressOnSharedPreference(
+                        _addressModelXYList[index].results[0].formattedAddress,
+                        _addressModelXYList[index].results[0].geometry.location.lat,
+                        _addressModelXYList[index].results[0].geometry.location.lng,
+                      );
 
                       // _saveAddressAndGoToNextPage(_addressModelXYList[index].result![0].text ?? '',
                       //   num.parse(_addressModelXYList[index].input!.point!.y ?? '0') ,
@@ -286,8 +278,7 @@ class _AddressPageState extends State<AddressPage> {
     // myAddress = await GoogleMapServices.getAddressFromLocation(
     //     position!.latitude, position!.longitude);
     List<AddressFromLocation> addressModelXY =
-        await GoogleMapServices.getAddressFromLocation5(
-            position!.latitude, position!.longitude);
+        await GoogleMapServices.getAddressFromLocation5(position!.latitude, position!.longitude);
     _addressModelXYList.addAll(addressModelXY);
 
     // debugPrint(myAddress!.results[0].formattedAddress.toString());
@@ -304,13 +295,13 @@ class _AddressPageState extends State<AddressPage> {
   //       .animateToPage(2, duration: const Duration(milliseconds: 500), curve: Curves.ease);
   // }
 
-  // _saveAddressOnSharedPreference(String address, num lat, num lon) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   logger.d('save Address: $address.');
-  //   await prefs.setString(SHARED_ADDRESS, address);
-  //   await prefs.setDouble(SHARED_LAT, lat.toDouble());
-  //   await prefs.setDouble(SHARED_LON, lon.toDouble());
-  // }
+  _saveAddressOnSharedPreference(String address, num lat, num lon) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    debugPrint('save Address: $address.');
+    await prefs.setString(SHARED_ADDRESS, address);
+    await prefs.setDouble(SHARED_LAT, lat.toDouble());
+    await prefs.setDouble(SHARED_LON, lon.toDouble());
+  }
 
   void onClickTextField(text) async {
     _addressModelXYList.clear();

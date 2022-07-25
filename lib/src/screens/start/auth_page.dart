@@ -1,8 +1,10 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/common_size.dart';
+import '../../constants/shared_pref_key.dart';
 import '../../states/user_state.dart';
 
 class AuthPage extends StatefulWidget {
@@ -107,7 +109,7 @@ class _AuthPageState extends State<AuthPage> {
                         onPressed: () async {
                           debugPrint(
                               '_verificationStatus: $_verificationStatus');
-                          // _getAddress();
+                          _getAddress();
                           FocusScope.of(context).unfocus();
                           if (_verificationStatus ==
                               VerificationStatus.codeSending) {
@@ -309,13 +311,13 @@ class _AuthPageState extends State<AuthPage> {
     debugPrint('_verificationStatus(attemptVarify): $_verificationStatus');
   }
 
-// _getAddress() async {
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   String address = prefs.getString(SHARED_ADDRESS) ?? '';
-//   double lat = prefs.getDouble(SHARED_LAT) ?? 0;
-//   double lon = prefs.getDouble(SHARED_LON) ?? 0;
-//   logger.d('get Address: [$address] [$lat] [$lon]');
-// }
+_getAddress() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String address = prefs.getString(SHARED_ADDRESS) ?? '';
+  double lat = prefs.getDouble(SHARED_LAT) ?? 0.0;
+  double lon = prefs.getDouble(SHARED_LON) ?? 0.0;
+  debugPrint('get Address: [$address] [$lat] [$lon]');
+}
 
 }
 

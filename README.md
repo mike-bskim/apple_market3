@@ -8,6 +8,8 @@ A new Flutter project.
 
 found address on the list 까지
 
+유저위치, 전화번호, 주소, 프로파일 이미지,
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
