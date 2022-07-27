@@ -46,6 +46,7 @@ dependencies:
   uuid: ^3.0.6
   geolocator: ^9.0.1
   shared_preferences: ^2.0.15
+  firebase_core: ^1.20.0
 
 
 dev_dependencies:

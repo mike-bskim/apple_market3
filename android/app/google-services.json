@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "240693604613",
+    "project_id": "apple-market3",
+    "storage_bucket": "apple-market3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:240693604613:android:af004144535f06ccff076c",
+        "android_client_info": {
+          "package_name": "com.example.apple_market3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "240693604613-fppov94dk1qco0u7b0bft5qc4v60fjuh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.apple_market3",
+            "certificate_hash": "0e505dcde0c482b6e86f8e5f2f6b2c1d734534a5"
+          }
+        },
+        {
+          "client_id": "240693604613-4m4ebmlda5rvstvg6q9h940jktfoscbd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFcsKi3t4-WlorPJ8cropkVHu5---1waQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "240693604613-4m4ebmlda5rvstvg6q9h940jktfoscbd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
