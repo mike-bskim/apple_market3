@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../middleware/check_auth.dart';
-import '../screens/start_screen.dart';
-import '../screens/home_screen.dart';
+import '../screens/start/start_screen.dart';
+import '../screens/home/home_screen.dart';
 
 // GETx 관련
 List<GetPage<dynamic>> getPages() {

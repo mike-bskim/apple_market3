@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'start/address_page.dart';
-import 'start/auth_page.dart';
-import 'start/intro_page.dart';
+import 'address_page.dart';
+import 'auth_page.dart';
+import 'intro_page.dart';
 
 class StartScreen extends StatelessWidget {
   StartScreen({Key? key}) : super(key: key);

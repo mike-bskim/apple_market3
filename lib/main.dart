@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'src/apple_app.dart';
-import 'src/screens/splash_screen.dart';
+import 'src/screens/splash/splash_screen.dart';
 import 'src/utils/logger.dart';
 
 void main() {
@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         });
   }
 
+// FutureBuilder 에서 딜레이 있음, 딜레이 동안은 SplashScreen(), 딜레이후에는 AppleApp() 로 이동
   StatelessWidget _splashLoadingWidget(AsyncSnapshot<Object> snapshot) {
     // future has 3 state, hasError, hasData, waiting
     if (snapshot.hasError) {

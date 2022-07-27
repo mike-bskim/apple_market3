@@ -96,6 +96,8 @@ class AppleApp extends StatelessWidget {
   }
 
   // getx 라우팅시 설정방법
+  // 초기 페이지는 '/'(HomeScreen) 이고,
+  // 로그인이 안되어 있으면 미들웨어에서 '/auth'(StartScreen) 으로 라우팅을 변경함
   GetMaterialApp getRouter() {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
