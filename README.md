@@ -6,7 +6,7 @@ A new Flutter project.
 
 환경은 flutter 3 버전입니다.
 
-found address on the list 까지
+rounded corner(5.55) 까지
 
 유저위치, 전화번호, 주소, 프로파일 이미지,
 

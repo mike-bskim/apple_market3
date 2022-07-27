@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class UserController extends GetxController {
   static UserController get to => Get.find();
 
-  final RxBool _userLoggedIn = false.obs;
+  final RxBool _userLoggedIn = true.obs;
 
   RxBool get userState => _userLoggedIn;
 
