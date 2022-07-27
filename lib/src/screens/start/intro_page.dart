@@ -1,13 +1,14 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/common_size.dart';
 import '../../utils/logger.dart';
 
 class IntroPage extends StatelessWidget {
-  final PageController pageController;
+  // final PageController pageController;
 
-  const IntroPage({Key? key, required this.pageController}) : super(key: key);
+  const IntroPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +57,7 @@ class IntroPage extends StatelessWidget {
                           // 왼쪽과 위쪽의 간격 설정
                           left: imgSize * 0.45,
                           top: imgSize * 0.45,
-                          child: ExtendedImage.asset(
-                              'assets/imgs/carrot_intro_pos.png')),
+                          child: ExtendedImage.asset('assets/imgs/carrot_intro_pos.png')),
                     ],
                   ),
                 ),
@@ -75,20 +75,18 @@ class IntroPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: padding_16),
+                      padding: const EdgeInsets.symmetric(horizontal: padding_16),
                       child: TextButton(
                         onPressed: () async {
                           // _goToNextPage(_orgContext);
                           // context.read<PageController>().animateToPage(1,
                           //     duration: const Duration(milliseconds: 500), curve: Curves.ease);
                           logger.d('on Intro page, text Button Clicked !!!');
-                          pageController.animateToPage(1,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.ease);
+                          context.read<PageController>().animateToPage(1,
+                              duration: const Duration(milliseconds: 500), curve: Curves.ease);
                         },
-                        style: TextButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor),
+                        style:
+                            TextButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
                         child: Text(
                           '내 동네 설정하고 시작하기',
                           style: Theme.of(context).textTheme.button,

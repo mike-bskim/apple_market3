@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/common_size.dart';
 import '../../constants/shared_pref_key.dart';
@@ -173,7 +174,7 @@ class _AddressPageState extends State<AddressPage> {
                           _addressModel!.results.juso[index].roadAddrPart1);
                       debugPrint(myLocation!.results[0].formattedAddress);
                       debugPrint(myLocation!.results[0].geometry.location.toString());
-                      _saveAddressOnSharedPreference(
+                      _saveAddressAndGoToNextPage(
                         _addressModel!.results.juso[index].roadAddrPart1,
                         myLocation!.results[0].geometry.location.lat,
                         myLocation!.results[0].geometry.location.lng,
@@ -240,7 +241,7 @@ class _AddressPageState extends State<AddressPage> {
                       debugPrint(_addressModelXYList[index].results[0].formattedAddress);
                       debugPrint(
                           _addressModelXYList[index].results[0].geometry.location.toString());
-                      _saveAddressOnSharedPreference(
+                      _saveAddressAndGoToNextPage(
                         _addressModelXYList[index].results[0].formattedAddress,
                         _addressModelXYList[index].results[0].geometry.location.lat,
                         _addressModelXYList[index].results[0].geometry.location.lng,
@@ -288,12 +289,14 @@ class _AddressPageState extends State<AddressPage> {
     });
   }
 
-  // _saveAddressAndGoToNextPage(String address, num lat, num lon) async {
-  //   await _saveAddressOnSharedPreference(address, lat, lon);
-  //   context
-  //       .read<PageController>()
-  //       .animateToPage(2, duration: const Duration(milliseconds: 500), curve: Curves.ease);
-  // }
+  _saveAddressAndGoToNextPage(String address, num lat, num lon) async {
+    await _saveAddressOnSharedPreference(address, lat, lon);
+    // "flutter do not use build contexts across async gaps"
+    // 상기 경고가 나와서 mounted 조건을 추가함
+    if (!mounted) return;
+    context.read<PageController>().animateToPage(2,
+        duration: const Duration(milliseconds: 500), curve: Curves.ease);
+  }
 
   _saveAddressOnSharedPreference(String address, num lat, num lon) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
