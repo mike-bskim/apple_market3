@@ -6,9 +6,11 @@ A new Flutter project.
 
 환경은 flutter 3 버전입니다.
 
-rounded corner(5.55) 까지
+Phone Auth Flow 까지
 
 유저위치, 전화번호, 주소, 프로파일 이미지,
+아이폰 오류 설정
+  use firebase core, add firebase auth package. Phone auth Testing,
 
 ## Getting Started
 

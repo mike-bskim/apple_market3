@@ -1,4 +1,5 @@
-import 'package:apple_market3/src/states/user_state.dart';
+// import 'package:apple_market3/src/states/user_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             onPressed: () {
               // 로그아웃하면 '/auth' 로 이동
-              UserController.to.setUserAuth(false);
+              // UserController.to.setUserAuth(false);
+              // user 상태가 변하면서 스트림이 자동 호출되면서 로그아웃됨
+              FirebaseAuth.instance.signOut();
             },
             icon: const Icon(Icons.logout),
           ),

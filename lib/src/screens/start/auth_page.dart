@@ -1,4 +1,5 @@
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/common_size.dart';
 import '../../constants/shared_pref_key.dart';
 import '../../states/user_state.dart';
+import '../../utils/logger.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -23,8 +25,7 @@ class _AuthPageState extends State<AuthPage> {
   );
 
   // 초기값을 010 으로 시작하게 설정
-  final TextEditingController _phoneNumberController =
-      TextEditingController(text: "010");
+  final TextEditingController _phoneNumberController = TextEditingController(text: "010 5555 5555");
 
   final TextEditingController _codeController = TextEditingController();
 
@@ -33,8 +34,8 @@ class _AuthPageState extends State<AuthPage> {
   // 인증단계 flag
   VerificationStatus _verificationStatus = VerificationStatus.none;
 
-  // String? _verificationId;
-  // int? _forceResendingToken;
+  String? _verificationId;
+  int? _forceResendingToken;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +45,9 @@ class _AuthPageState extends State<AuthPage> {
       builder: (context, constraints) {
         Size size = MediaQuery.of(context).size;
 
-        // 승인증에는 모든 클릭은 무시하게 처리
+        // 인증 단계에서는 모든 클릭은 무시하게 처리
         return IgnorePointer(
-          // 검증 단계에서는 화면의 모든 터치를 무시한다
+          // 인증 단계에서는 화면의 모든 터치를 무시한다
           ignoring: _verificationStatus == VerificationStatus.verifying,
           child: Form(
             key: _formKey,
@@ -73,8 +74,7 @@ class _AuthPageState extends State<AuthPage> {
                         const SizedBox(
                           width: padding_08,
                         ),
-                        const Text(
-                            '사과마켓은 휴대폰 번호로 가입해요 \n번호는 안전하게 보관되며 \n어디에도 공개되지 않아요.'),
+                        const Text('사과마켓은 휴대폰 번호로 가입해요 \n번호는 안전하게 보관되며 \n어디에도 공개되지 않아요.'),
                       ],
                     ),
                     const SizedBox(
@@ -88,8 +88,7 @@ class _AuthPageState extends State<AuthPage> {
                       inputFormatters: [MaskedInputFormatter('000 0000 0000')],
                       decoration: InputDecoration(
                         hintText: '전화번호 입력',
-                        hintStyle:
-                            TextStyle(color: Theme.of(context).hintColor),
+                        hintStyle: TextStyle(color: Theme.of(context).hintColor),
                         focusedBorder: inputBorder,
                         border: inputBorder,
                       ),
@@ -107,12 +106,10 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                     TextButton(
                         onPressed: () async {
-                          debugPrint(
-                              '_verificationStatus: $_verificationStatus');
+                          debugPrint('_verificationStatus: $_verificationStatus');
                           _getAddress();
                           FocusScope.of(context).unfocus();
-                          if (_verificationStatus ==
-                              VerificationStatus.codeSending) {
+                          if (_verificationStatus == VerificationStatus.codeSending) {
                             return;
                           }
                           if (_formKey.currentState != null) {
@@ -125,73 +122,63 @@ class _AuthPageState extends State<AuthPage> {
 
                               setState(() {
                                 // 인증단계 코드 전송중~~
-                                _verificationStatus =
-                                    VerificationStatus.codeSending;
+                                _verificationStatus = VerificationStatus.codeSending;
                               });
-
-                              // 임시 시간 딜레이 코드
-                              await Future.delayed(const Duration(seconds: 3));
-                              setState(() {
-                                // 인증단계 코드 전송완료~~
-                                _verificationStatus =
-                                    VerificationStatus.codeSent;
-                              });
-
-                              // FirebaseAuth auth = FirebaseAuth.instance;
-                              // await auth.verifyPhoneNumber(
-                              //   phoneNumber: _phoneNum,
-                              //   forceResendingToken: _forceResendingToken,
-                              //   verificationCompleted: (PhoneAuthCredential credential) async {
-                              //     // ANDROID ONLY!
-                              //     // login 이 정상적으로 완료되었는지 확인 코드 추가
-                              //     logger.d('전화번호 인증 완료 [$credential]');
-                              //     await auth.signInWithCredential(credential);
-                              //   },
-                              //   codeAutoRetrievalTimeout: (String verificationId) {
-                              //     // 현재는 아무것도 안한다.
-                              //   },
-                              //   codeSent: (String verificationId, int? forceResendingToken) async {
-                              //     setState(() {
-                              //       // 인증단계 전송완료~~
-                              //       _verificationStatus = VerificationStatus.codeSent;
-                              //     });
-                              //     _verificationId = verificationId;
-                              //     _forceResendingToken = forceResendingToken;
-                              //   },
-                              //   verificationFailed: (FirebaseAuthException error) {
-                              //     logger.e(error.message);
-                              //     setState(() {
-                              //       _verificationStatus = VerificationStatus.none;
-                              //     });
-                              //   },
-                              // );
+// 중요 메인 로직 1/2
+                              FirebaseAuth auth = FirebaseAuth.instance;
+                              await auth.verifyPhoneNumber(
+                                phoneNumber: phoneNum,
+                                forceResendingToken: _forceResendingToken,
+                                verificationCompleted: (PhoneAuthCredential credential) async {
+                                  // ANDROID ONLY!
+                                  // login 이 정상적으로 완료되었는지 확인 코드 추가
+                                  logger.d('전화번호 인증 완료 [$credential]');
+                                  // 로그인이 정상완료되면 user 정보가 변경되어 스트림이 자동 호출됨
+                                  await auth.signInWithCredential(credential);
+                                },
+                                // 기본값이 30초인데, time out 에러가 발생하여 지정해줌
+                                timeout: const Duration(seconds: 30),
+                                codeAutoRetrievalTimeout: (String verificationId) {
+                                  // 현재는 아무것도 안한다.
+                                },
+                                codeSent: (String verificationId, int? forceResendingToken) async {
+                                  setState(() {
+                                    // 인증단계 전송완료~~, 전송이 완료되면 여기로 이동,
+                                    _verificationStatus = VerificationStatus.codeSent;
+                                  });
+                                  // verificationId 값이 널이면 오류
+                                  _verificationId = verificationId;
+                                  // forceResendingToken 값은 첫번째 전송에서는 널, 그 이후는 값있음
+                                  _forceResendingToken = forceResendingToken;
+                                },
+                                verificationFailed: (FirebaseAuthException error) {
+                                  logger.d(error.message);
+                                  setState(() {
+                                    _verificationStatus = VerificationStatus.none;
+                                  });
+                                },
+                              );
+// 중요 메인 로직 1/2
                             } else {
                               setState(() {
                                 _verificationStatus = VerificationStatus.none;
                               });
                             }
                           }
-                          debugPrint(
-                              '_verificationStatus: $_verificationStatus');
+                          debugPrint('_verificationStatus: $_verificationStatus');
                         },
                         // 검증상태에 따라서 버튼의 문자열을 변경하여 동작중임을 표시함
-                        child: _verificationStatus ==
-                                VerificationStatus.codeSending
+                        child: _verificationStatus == VerificationStatus.codeSending
                             ? const SizedBox(
                                 height: 26,
                                 width: 26,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              )
+                                child: CircularProgressIndicator(color: Colors.white))
                             : const Text('인증문자 발송')),
                     const SizedBox(height: padding_16 * 2),
                     AnimatedOpacity(
                       // 투명도를 설정하는 위젯
                       duration: _duration_300,
-                      opacity: (_verificationStatus == VerificationStatus.none)
-                          ? 0.0
-                          : 1.0,
+                      opacity: (_verificationStatus == VerificationStatus.none) ? 0.0 : 1.0,
                       child: AnimatedContainer(
                         // StatelessWidget 은 적용할수 없음, StatefulWidget 만 적용가능
                         duration: _duration_1000,
@@ -206,8 +193,7 @@ class _AuthPageState extends State<AuthPage> {
                           inputFormatters: [MaskedInputFormatter('000000')],
                           decoration: InputDecoration(
                             hintText: '인증문자 입력',
-                            hintStyle:
-                                TextStyle(color: Theme.of(context).hintColor),
+                            hintStyle: TextStyle(color: Theme.of(context).hintColor),
                             focusedBorder: inputBorder,
                             border: inputBorder,
                           ),
@@ -221,22 +207,18 @@ class _AuthPageState extends State<AuthPage> {
                       height: getVerificationBtnHeight(_verificationStatus),
                       child: TextButton(
                           onPressed: () {
-                            debugPrint(
-                                '_verificationStatus(onPressed): $_verificationStatus');
+                            debugPrint('_verificationStatus(onPressed): $_verificationStatus');
                             FocusScope.of(context).unfocus();
                             // 인증 진행중
                             attemptVarify(context);
-                            debugPrint(
-                                '_verificationStatus(onPressed): $_verificationStatus');
+                            debugPrint('_verificationStatus(onPressed): $_verificationStatus');
                           },
                           // 검증상태에 따라서 버튼의 문자열을 변경하여 동작중임을 표시함
-                          child: _verificationStatus ==
-                                  VerificationStatus.verifying
+                          child: _verificationStatus == VerificationStatus.verifying
                               ? const SizedBox(
                                   height: 26,
                                   width: 26,
-                                  child: CircularProgressIndicator(
-                                      color: Colors.white),
+                                  child: CircularProgressIndicator(color: Colors.white),
                                 )
                               : const Text('인증')),
                     ),
@@ -281,50 +263,44 @@ class _AuthPageState extends State<AuthPage> {
     });
     debugPrint('_verificationStatus(attemptVarify): $_verificationStatus');
 
-    // try {
-    //   PhoneAuthCredential credential = PhoneAuthProvider.credential(
-    //       verificationId: _verificationId!, smsCode: _codeController.text);
-    //   // Sign the user in (or link) with the credential
-    //   await FirebaseAuth.instance.signInWithCredential(credential);
-    // } catch (e) {
-    //   logger.e('verification failed !!!');
-    //   SnackBar _snackBar = const SnackBar(content: Text('입력하신 코드 오류입니다'));
-    //   ScaffoldMessenger.of(context).showSnackBar(_snackBar);
-    // }
-    // // Create a PhoneAuthCredential with the code
-
-    // 강제 딜레이 추가
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: _verificationId!, smsCode: _codeController.text);
+      // Sign the user in (or link) with the credential
+      // 로그인이 정상완료되면 user 정보가 변경되어 스트림이 자동 호출됨
+      await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      logger.e('verification failed !!!');
+      SnackBar snackBar = const SnackBar(content: Text('입력하신 코드 오류입니다'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    // Create a PhoneAuthCredential with the code
 
     setState(() {
       // 인증 완료
       _verificationStatus = VerificationStatus.verificationDone;
     });
 
-    if(routerType == RouterType.beamer){
-      // context.read<UserProvider>().setUserAuth(true);
-      // debugPrint('*** userState(attemptVarify): ${context.read<UserProvider>().userState}');
-    } else {
-      UserController.to.setUserAuth(true);
-    }
+    // // 이제는 user 상태가 자동으로 변하면서 로그인되므로 아래 부분은 필요없음
+    // if (routerType == RouterType.beamer) {
+    //   // context.read<UserProvider>().setUserAuth(true);
+    //   // debugPrint('*** userState(attemptVarify): ${context.read<UserProvider>().userState}');
+    // } else {
+    //   if (UserController.to.user.value != null) {
+    //     // UserController.to.setUserAuth(true);
+    //   }
+    // }
 
     debugPrint('_verificationStatus(attemptVarify): $_verificationStatus');
   }
 
-_getAddress() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String address = prefs.getString(SHARED_ADDRESS) ?? '';
-  double lat = prefs.getDouble(SHARED_LAT) ?? 0.0;
-  double lon = prefs.getDouble(SHARED_LON) ?? 0.0;
-  debugPrint('get Address: [$address] [$lat] [$lon]');
+  _getAddress() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String address = prefs.getString(SHARED_ADDRESS) ?? '';
+    double lat = prefs.getDouble(SHARED_LAT) ?? 0.0;
+    double lon = prefs.getDouble(SHARED_LON) ?? 0.0;
+    debugPrint('get Address: [$address] [$lat] [$lon]');
+  }
 }
 
-}
-
-enum VerificationStatus {
-  none,
-  codeSending,
-  codeSent,
-  verifying,
-  verificationDone
-}
+enum VerificationStatus { none, codeSending, codeSent, verifying, verificationDone }

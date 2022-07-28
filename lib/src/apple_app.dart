@@ -25,10 +25,8 @@ final _routerDelegate = BeamerDelegate(
       pathPatterns: ['/'],
       // guardNonMatching: true,
       check: (context, location) {
-        debugPrint(
-            'userState: ${context.read<UserProvider>().userState.toString()}');
-        return context.read<UserProvider>().userState;
-        // return context.watch<UserNotifier>().user != null;
+        // return context.read<UserProvider>().userState;
+        return context.watch<UserProvider>().user != null;
       },
       beamToNamed: (origin, target) => '/auth',
       // showPage: BeamPage(key: const ValueKey(LOCATION_AUTH), child: StartScreen()),
