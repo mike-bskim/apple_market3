@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/common_size.dart';
 import '../../constants/shared_pref_key.dart';
-import '../../states/user_state.dart';
 import '../../utils/logger.dart';
 
 class AuthPage extends StatefulWidget {

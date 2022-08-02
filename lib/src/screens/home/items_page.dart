@@ -1,6 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../constants/common_size.dart';
 
@@ -20,7 +21,17 @@ class _ItemsPageState extends State<ItemsPage> {
       builder: (context, constraints) {
         Size size = MediaQuery.of(context).size;
         final imgSize = size.width / 4;
-        return _listView(imgSize);
+
+        return FutureBuilder(
+            future: Future.delayed(const Duration(seconds: 5)),
+            builder: (context, snapshot) {
+              return AnimatedSwitcher(
+                duration: const Duration(seconds: 1),
+                child: (snapshot.connectionState == ConnectionState.done)
+                    ? _listView(imgSize)
+                    : _shimmerListView(imgSize),
+              );
+            });
       },
     );
   }
@@ -30,17 +41,24 @@ class _ItemsPageState extends State<ItemsPage> {
       padding: const EdgeInsets.all(padding_16),
       separatorBuilder: (context, index) {
         return Divider(
-          thickness: 1, // 실제 라인 두께
+          thickness: 1,
+          // 실제 라인 두께
           color: Colors.grey[400],
-          height: padding_16 * 2 + 1, // 라인 위/아래의 공간
-          indent: padding_16, // 시작 부분 공간
+          height: padding_16 * 2 + 1,
+          // 라인 위/아래의 공간
+          indent: padding_16,
+          // 시작 부분 공간
           endIndent: padding_16, // 끝나는 부분 공간
         );
       },
       itemCount: 10,
       itemBuilder: (context, index) {
-        return InkWell(
-          onTap: () {},
+        return InkWell(//InkWell
+          onTap: () {
+            // UserService().fireStoreTest();
+            // UserService().fireStoreReadTest();
+            //
+          },
           child: SizedBox(
             height: imgSize,
             child: Row(
@@ -107,63 +125,134 @@ class _ItemsPageState extends State<ItemsPage> {
     );
   }
 
-// Widget _shimmerListView(double imgSize) {
-//   var _containerDeco = BoxDecoration(
-//       shape: BoxShape.rectangle, color: Colors.white, borderRadius: BorderRadius.circular(15.0));
-//
-//   _containerSample(double _width) {
-//     return Container(height: 16, width: _width, decoration: _containerDeco);
-//   }
-//
-//   return Shimmer.fromColors(
-//     highlightColor: Colors.grey[100]!,
-//     enabled: true,
-//     baseColor: Colors.grey[300]!,
-//     child: ListView.separated(
-//       padding: const EdgeInsets.all(padding_16),
-//       separatorBuilder: (context, index) {
-//         return const Divider(
-//           thickness: 1,
-//           color: Colors.black26,
-//           height: padding_16 * 2 + 1,
-//           indent: padding_16,
-//           endIndent: padding_16,
-//         );
-//       },
-//       itemCount: 10,
-//       itemBuilder: (context, index) {
-//         return SizedBox(
-//           height: imgSize,
-//           child: Row(
-//             children: <Widget>[
-//               Container(height: imgSize, width: imgSize, decoration: _containerDeco),
-//               const SizedBox(
-//                 width: padding_16,
-//               ),
-//               Expanded(
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: <Widget>[
-//                     _containerSample(100),
-//                     const SizedBox(height: 8),
-//                     _containerSample(70),
-//                     const SizedBox(height: 8),
-//                     _containerSample(130),
-//                     Expanded(child: Container()),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.end,
-//                       children: [
-//                         Container(height: 16, width: 100, decoration: _containerDeco),
-//                       ],
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     ),
-//   );
-// }
+  Widget _shimmerListView(double imgSize) {
+    // BoxDecoration 에서 색상을 설정시, Container 에서는 색상정보를 제거해야 한다,
+    BoxDecoration containerDeco({required double radius}) {
+      return BoxDecoration(
+          shape: BoxShape.rectangle,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(radius));
+    }
+
+    _containerSample({required double height, required double width, required double radius}) {
+      return Container(height: height, width: width, decoration: containerDeco(radius: radius));
+    }
+
+    return Shimmer.fromColors(
+      highlightColor: Colors.grey[100]!,
+      enabled: true,
+      baseColor: Colors.grey[300]!,
+      period: const Duration(seconds: 2),
+      child: ListView.separated(
+        padding: const EdgeInsets.all(padding_16),
+        separatorBuilder: (context, index) {
+          return const Divider(
+            thickness: 1,
+            color: Colors.black26,
+            height: padding_16 * 2 + 1,
+            indent: padding_16,
+            endIndent: padding_16,
+          );
+        },
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return SizedBox(
+            height: imgSize,
+            child: Row(
+              children: <Widget>[
+                _containerSample(height: imgSize, width: imgSize, radius: 12.0),
+                const SizedBox(width: padding_16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizeTransitionAnimation(key: UniqueKey(), height: 14, width: 140, radius: 4),
+                      const SizedBox(height: 8),
+                      SizeTransitionAnimation(key: UniqueKey(), height: 12, width: 70, radius: 4),
+                      const SizedBox(height: 8),
+                      SizeTransitionAnimation(key: UniqueKey(), height: 14, width: 100, radius: 4),
+                      Expanded(child: Container()),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizeTransitionAnimation(key: UniqueKey(), height: 14, width: 150, radius: 4),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class SizeTransitionAnimation extends StatefulWidget {
+  final double height;
+  final double width;
+  final double radius;
+
+  const SizeTransitionAnimation({
+    Key? key,
+    required this.height,
+    required this.width,
+    required this.radius,
+  }) : super(key: key);
+
+  @override
+  State<SizeTransitionAnimation> createState() => _SizeTransitionAnimationState();
+}
+
+class _SizeTransitionAnimationState extends State<SizeTransitionAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 1),
+    lowerBound: 0.7,
+  )..repeat(reverse: true);
+
+  late Animation<double> animation = CurvedAnimation(
+    parent: controller,
+    curve: Curves.easeInOut ,// Curve.~Cubic(0.9, 0.9, 0.9, 1.0)
+  );
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  BoxDecoration containerDeco({required double radius}) {
+    return BoxDecoration(
+      shape: BoxShape.rectangle,
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(radius),
+      // Shimmer 때문에, 실제 gradient 는 동작하지 않음,
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Colors.deepOrange,
+          Colors.deepPurple,
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizeTransition(
+      sizeFactor: animation,
+      axis: Axis.horizontal,
+      axisAlignment: 0.5,
+      child: Container(
+        height: widget.height,
+        width: widget.width,
+        decoration: containerDeco(radius: widget.radius),
+      ),
+    );
+  }
 }
