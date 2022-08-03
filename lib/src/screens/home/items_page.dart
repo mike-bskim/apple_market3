@@ -166,11 +166,11 @@ class _ItemsPageState extends State<ItemsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      SizeTransitionAnimation(key: UniqueKey(), height: 14, width: 140, radius: 4),
+                      const SizeTransitionAnimation(key: ValueKey(1), height: 14, width: 140, radius: 4),
                       const SizedBox(height: 8),
-                      SizeTransitionAnimation(key: UniqueKey(), height: 12, width: 70, radius: 4),
+                      const SizeTransitionAnimation(key: ValueKey(2), height: 12, width: 70, radius: 4),
                       const SizedBox(height: 8),
-                      SizeTransitionAnimation(key: UniqueKey(), height: 14, width: 100, radius: 4),
+                      const SizeTransitionAnimation(key: ValueKey(3), height: 14, width: 100, radius: 4),
                       Expanded(child: Container()),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
