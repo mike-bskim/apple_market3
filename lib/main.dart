@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     // return const SplashScreen();
     return FutureBuilder<Object>(
-        future: Future.delayed(const Duration(seconds: 2), () => 100),
+        future: Future.delayed(const Duration(seconds: 1), () => 100),
         // future: _initialization,
         builder: (context, snapshot) {
           // 장면전환을 천천히 부드럽게 처리하는 위젯

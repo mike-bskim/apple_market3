@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../widgets/expandable_fab.dart';
 import 'items_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,6 +20,35 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     debugPrint(">>> build from HomeScreen");
     return Scaffold(
+      floatingActionButton: ExpandableFab(
+        // distance between button and children,
+        distance: 90,
+        children: <Widget>[
+          MaterialButton(
+            onPressed: () {
+              // context.beamToNamed('/$LOCATION_INPUT');
+            },
+            shape: const CircleBorder(),
+            height: 48,
+            color: Theme.of(context).colorScheme.primary,
+            child: const Icon(Icons.edit),
+          ),
+          MaterialButton(
+            onPressed: () {},
+            shape: const CircleBorder(),
+            height: 48,
+            color: Theme.of(context).colorScheme.primary,
+            child: const Icon(Icons.input),
+          ),
+          MaterialButton(
+            onPressed: () {},
+            shape: const CircleBorder(),
+            height: 48,
+            color: Theme.of(context).colorScheme.primary,
+            child: const Icon(Icons.add),
+          ),
+        ],
+      ),
       appBar: AppBar(
         // centerTitle: true,
         title: Text('밀라노', style: Theme.of(context).appBarTheme.titleTextStyle),

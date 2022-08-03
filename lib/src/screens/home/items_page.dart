@@ -23,7 +23,7 @@ class _ItemsPageState extends State<ItemsPage> {
         final imgSize = size.width / 4;
 
         return FutureBuilder(
-            future: Future.delayed(const Duration(seconds: 5)),
+            future: Future.delayed(const Duration(seconds: 3)),
             builder: (context, snapshot) {
               return AnimatedSwitcher(
                 duration: const Duration(seconds: 1),
