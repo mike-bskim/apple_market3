@@ -100,7 +100,7 @@ class UserModel1 {
     this.reference,
   });
 
-  // userKey, reference 는 별도로 전달할 예정,
+  // reference 는 별도로 전달할 예정,
   factory UserModel1.fromJson(Map<String, dynamic> json) => UserModel1(
         userKey: json[DOC_USERKEY],
         phoneNumber: json[DOC_PHONENUMBER],

@@ -6,9 +6,13 @@ A new Flutter project.
 
 환경은 flutter 3 버전입니다.
 
-use of firestore 까지
+when to create user model on firestore 까지
 
 유저위치, 전화번호, 주소, 프로파일 이미지,
+location(lat, long) -> geofire  이게 있어야 주위 데이터를 찾기 쉬움
+생성일, 변경일, doc.id,
+
+
 아이폰 오류 설정
   firebase for ios
   use firebase core,

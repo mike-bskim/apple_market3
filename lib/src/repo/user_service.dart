@@ -1,19 +1,58 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../utils/logger.dart';
+import '../constants/data_keys.dart';
+import '../models/user_model.dart';
 
 class UserService {
-  Future fireStoreTest() async {
-    var doc = FirebaseFirestore.instance.collection('TESTING_COLLECTION').doc('abc');
-    doc.set({
-      'id': doc.id,
-      'datetime': DateTime.now().toString(),
-      'displayName': 'BSKim',
-    });
+
+  // 싱글톤 디자인 패턴 ***************************************
+  // 인스턴스가 한번만 생성되고, 2번째 생성시에는 처음 생성한 인스턴스를 리턴,
+  static final UserService _userService = UserService._internal();
+  factory UserService() => _userService;
+  UserService._internal();
+  // 싱글톤 디자인 패턴 ***************************************
+
+  // 사용자 uid 를 기반으로 저장하고, uid 를 기반으로 저장된 정보가 있으면 skip,
+  Future createNewUser(Map<String, dynamic> json, String userKey) async {
+
+    DocumentReference<Map<String, dynamic>> docRef =
+    FirebaseFirestore.instance.collection(COL_USERS).doc(userKey);
+    final DocumentSnapshot documentSnapshot = await docRef.get();
+
+    // 사용자 정보가 없으면 생성함,
+    if(!documentSnapshot.exists){
+      await docRef.set(json);
+    }
   }
 
-  void fireStoreReadTest() {
-    var doc = FirebaseFirestore.instance.collection('TESTING_COLLECTION').doc('abc').get();
-    doc.then((DocumentSnapshot<Map<String, dynamic>> value) => logger.d(value.data()));
+  // 사용자 uid 를 이용하여 데이터 읽기,
+  Future<UserModel1> getUserModel(String userKey) async {
+
+    DocumentReference<Map<String, dynamic>> docRef =
+    FirebaseFirestore.instance.collection(COL_USERS).doc(userKey);
+    final DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await docRef.get();
+
+    // UserModel userModel = UserModel.fromSnapshot(documentSnapshot);
+    UserModel1 userModel1 = UserModel1.fromJson(documentSnapshot.data()!);
+    userModel1.reference = documentSnapshot.reference;
+    // debugPrint('--------------------------------------------------');
+    // debugPrint('documentSnapshot: ${documentSnapshot.id}');
+    // debugPrint('documentSnapshot: ${documentSnapshot.reference}');
+
+    return userModel1;
   }
+
+  // Future fireStoreTest() async {
+  //   var doc = FirebaseFirestore.instance.collection('TESTING_COLLECTION').doc('abc');
+  //   doc.set({
+  //     'id': doc.id,
+  //     'datetime': DateTime.now().toString(),
+  //     'displayName': 'BSKim',
+  //   });
+  // }
+  //
+  // void fireStoreReadTest() {
+  //   var doc = FirebaseFirestore.instance.collection('TESTING_COLLECTION').doc('abc').get();
+  //   doc.then((DocumentSnapshot<Map<String, dynamic>> value) => logger.d(value.data()));
+  // }
 }
