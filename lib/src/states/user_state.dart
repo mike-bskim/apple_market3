@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,19 +20,30 @@ class UserController extends GetxController {
   Rxn<UserModel1?> get userModel => _userModel;
 
   @override
+  void onInit() {
+    // getx 인스턴스 생성전에 호출됨, 인스턴스와 관련된 것을 호출시 주의할것,
+    debugPrint('************************* >>> UserController >> onInit');
+    initUser();
+    super.onInit();
+  }
+
+  @override
   void onReady() {
     // TODO: implement onReady
     super.onReady();
-    initUser();
+    debugPrint('************************* >>> UserController >> onReady');
+    // initUser();
     logger.d('(onReady)user status - $user');
   }
 
   void initUser() {
     FirebaseAuth.instance.authStateChanges().listen((user) async {
       // user 정보가 변경되면, 호출됨,
+      debugPrint('************************* >>> UserController >> listen');
       _user.value = user;
-      Get.offAndToNamed('/');
+      Get.offAllNamed('/');
       await _setNewUser(user);
+      logger.d('(_setNewUser) user status - $user');
     });
   }
 
@@ -59,28 +71,10 @@ class UserController extends GetxController {
       // 사용자 정보가 없으면 생성함, 있으면 무시함,
       await UserService().createNewUser(userModel.toJson(), userKey);
       _userModel.value = await UserService().getUserModel(userKey);
-      logger.d('(_userModel) - ${_userModel.toString()}');
-      logger.d('(_setNewUser/if) user status - $user');
+      // logger.d('(_userModel) - ${_userModel.toString()}');
+      // logger.d('(_setNewUser/if) user status - $user');
     } else {
-      logger.d('(_setNewUser/else) user status - $user');
+      // logger.d('(_setNewUser/else) user status - $user');
     }
   }
 }
-
-// class UserProvider extends ChangeNotifier {
-//   UserProvider() {
-//     initUser();
-//   }
-//
-//   User? _user;
-//
-//   void initUser() {
-//     FirebaseAuth.instance.authStateChanges().listen((user) {
-//       _user = user;
-//       logger.d('user status - $user');
-//       notifyListeners();
-//     });
-//   }
-//
-//   User? get user => _user;
-// }
