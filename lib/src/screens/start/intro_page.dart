@@ -12,7 +12,7 @@ class IntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(">>> build from IntroPage");
+    debugPrint("************************* >>> build from IntroPage");
     // if (routerType == RouterType.getX){
     //   debugPrint('** current user state(GetX): ${UserController.to.userState}');
     // } else {

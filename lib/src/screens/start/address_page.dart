@@ -107,7 +107,7 @@ class _AddressPageState extends State<AddressPage> {
 
     // fake GPS, 현재는 가짜 위치를 사용중
     position = fakePosition;
-    logger.d('myPosition(_getGPSLocation) : $position');
+    logger.d('_getGPSLocation(myPosition) : $position');
   }
 
   @override

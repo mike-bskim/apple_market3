@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,19 +15,27 @@ class UserController extends GetxController {
   final _userModel = Rxn<UserModel1?>();
 
   Rxn<User?> get user => _user;
+
   Rxn<UserModel1?> get userModel => _userModel;
+
+  @override
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+    initUser();
+    logger.d('(onReady)user status - $user');
+  }
 
   void initUser() {
     FirebaseAuth.instance.authStateChanges().listen((user) async {
       // user 정보가 변경되면, 호출됨,
+      _user.value = user;
+      Get.offAndToNamed('/');
       await _setNewUser(user);
-      Get.offAllNamed('/');
     });
   }
 
   Future<void> _setNewUser(User? user) async {
-    _user.value = user;
-
     // user 정보가 변경되면, 전화번호가 있어야만 호출됨,
     if (user != null && user.phoneNumber != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,9 +44,6 @@ class UserController extends GetxController {
       double lon = prefs.getDouble(SHARED_LON) ?? 0;
       String phoneNumber = user.phoneNumber!;
       String userKey = user.uid;
-      debugPrint('get Address: [$address] [$lat] [$lon]');
-      debugPrint('get phone&uid: [$phoneNumber] [$userKey]');
-      logger.d('(initUser)user status - $user');
 
       // 기존 모델이 아닌 새로운 모델로 작업중, UserModel >> UserModel1
       UserModel1 userModel = UserModel1(
@@ -56,35 +60,27 @@ class UserController extends GetxController {
       await UserService().createNewUser(userModel.toJson(), userKey);
       _userModel.value = await UserService().getUserModel(userKey);
       logger.d('(_userModel) - ${_userModel.toString()}');
-
+      logger.d('(_setNewUser/if) user status - $user');
+    } else {
+      logger.d('(_setNewUser/else) user status - $user');
     }
   }
-
-  @override
-  void onReady() {
-    // TODO: implement onReady
-    super.onReady();
-    initUser();
-    logger.d('(onReady)user status - $user');
-  }
 }
 
-
-
-class UserProvider extends ChangeNotifier {
-  UserProvider() {
-    initUser();
-  }
-
-  User? _user;
-
-  void initUser() {
-    FirebaseAuth.instance.authStateChanges().listen((user) {
-      _user = user;
-      logger.d('user status - $user');
-      notifyListeners();
-    });
-  }
-
-  User? get user => _user;
-}
+// class UserProvider extends ChangeNotifier {
+//   UserProvider() {
+//     initUser();
+//   }
+//
+//   User? _user;
+//
+//   void initUser() {
+//     FirebaseAuth.instance.authStateChanges().listen((user) {
+//       _user = user;
+//       logger.d('user status - $user');
+//       notifyListeners();
+//     });
+//   }
+//
+//   User? get user => _user;
+// }

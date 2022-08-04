@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../states/user_state.dart';
-import '../utils/logger.dart';
+// import '../utils/logger.dart';
 
 class CheckAuth extends GetMiddleware {
   @override
@@ -12,18 +12,18 @@ class CheckAuth extends GetMiddleware {
 
   @override
   RouteSettings? redirect(String? route) {
-    debugPrint(UserController.to.hashCode.toString());
+    debugPrint('*************************(CheckAuth): ' + UserController.to.hashCode.toString());
     // debugPrint(Get.find<UserController>().hashCode.toString());
     // if(Get.find<UserController>().user.value != null) {
-    if(UserController.to.user.value != null) {
-      isAuthenticated = true;
-      logger.d('No redirect goto (/): ${UserController.to.user.value}');
-    } else {
-      isAuthenticated = false;
-      logger.d('YES redirect goto (/auth): ${UserController.to.user.value}');
-    }
+    // if(UserController.to.user.value != null) {
+    //   isAuthenticated = true;
+    //   logger.d('No redirect goto (/): ${UserController.to.user.value}');
+    // } else {
+    //   isAuthenticated = false;
+    //   logger.d('YES redirect goto (/auth): ${UserController.to.user.value}');
+    // }
 
-    if (isAuthenticated == false) {
+    if (UserController.to.user.value == null) {
       return const RouteSettings(name: '/auth');
     }
     return null;

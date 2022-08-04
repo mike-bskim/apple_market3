@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(">>> build from HomeScreen");
+    debugPrint("************************* >>> build from HomeScreen");
     return Scaffold(
       floatingActionButton: ExpandableFab(
         // distance between button and children,

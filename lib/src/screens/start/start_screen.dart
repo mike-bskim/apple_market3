@@ -14,6 +14,7 @@ class StartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("************************* >>> build from StartScreen");
     // 일반적으로 Provider 를 잘 사용하지 않지만
     // 여기선 하위 페이지들에게 적용하기 위해서 변수를 전달하는 것 보단
     // Provider 로 처리하는게 더 좋아서 적용함
