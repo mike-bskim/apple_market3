@@ -10,7 +10,7 @@ List<GetPage<dynamic>> getPages() {
     GetPage(
       name: '/',
       page: () => const HomeScreen(),
-      middlewares: [CheckAuth()], // 미들웨어를 먼저 확인하고 "page:" 로 이동함
+      // middlewares: [CheckAuth()], // 미들웨어를 먼저 확인하고 "page:" 로 이동함
     ),
     GetPage(
       name: '/auth',

@@ -12,10 +12,19 @@ import '../utils/logger.dart';
 class UserController extends GetxController {
   static UserController get to => Get.find();
 
-  final _user = Rxn<User?>();
+  // final _user = Rxn<User?>();// 2차버전
+
+  // 아래 3줄은 Getx login 할때 핵심 기본 코드임
+  // Get.find() 대신 접근 가능한 방법
+  static UserController instance = Get.find();
+  // 선언가능한 다른 방식, final _user = Rxn<User?>();, Rxn<User?> get user => _user;
+  late Rx<User?> _user;
+  FirebaseAuth authentication = FirebaseAuth.instance;
+
   final _userModel = Rxn<UserModel1?>();
 
-  Rxn<User?> get user => _user;
+  // Rxn<User?> get user => _user;// 2차버전
+  Rx<User?> get user => _user;
 
   Rxn<UserModel1?> get userModel => _userModel;
 
@@ -23,7 +32,7 @@ class UserController extends GetxController {
   void onInit() {
     // getx 인스턴스 생성전에 호출됨, 인스턴스와 관련된 것을 호출시 주의할것,
     debugPrint('************************* >>> UserController >> onInit');
-    initUser();
+    // initUser();// 2차 버전
     super.onInit();
   }
 
@@ -32,8 +41,27 @@ class UserController extends GetxController {
     // TODO: implement onReady
     super.onReady();
     debugPrint('************************* >>> UserController >> onReady');
-    // initUser();
-    logger.d('(onReady)user status - $user');
+    // initUser();// onInit 으로 이동
+    // logger.d('(onReady)user status - $user');
+
+    _user = Rx<User?>(authentication.currentUser);
+    // 스트림 처리
+    _user.bindStream(authentication.userChanges());
+    // ever(listener, callback)
+    ever(_user, _moveToPage);
+
+  }
+
+  _moveToPage(User? user) async {
+    if (user == null) {
+      // Get.offAll(() => const LoginPage());
+      Get.offAllNamed('/auth');
+    } else {
+      // Get.offAll(() => const WelcomePage());
+      Get.offAllNamed('/');
+      await _setNewUser(user);
+      logger.d('(_setNewUser) user status - $user');
+    }
   }
 
   void initUser() {
