@@ -14,8 +14,8 @@ class UserController extends GetxController {
   void initUser() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
       _user.value = user;
-      logger.d('(initUser)user status - $user');
       Get.offAllNamed('/');
+      logger.d('(listen) user status - $user');
     });
   }
 
@@ -24,7 +24,7 @@ class UserController extends GetxController {
     // TODO: implement onReady
     super.onReady();
     initUser();
-    logger.d('(onReady)user status - $user');
+    // logger.d('(onReady)user status - $user');
   }
 }
 
