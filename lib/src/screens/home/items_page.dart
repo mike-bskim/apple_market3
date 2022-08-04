@@ -53,7 +53,8 @@ class _ItemsPageState extends State<ItemsPage> {
       },
       itemCount: 10,
       itemBuilder: (context, index) {
-        return InkWell(//InkWell
+        return InkWell(
+          //InkWell
           onTap: () {
             // UserService().fireStoreTest();
             // UserService().fireStoreReadTest();
@@ -166,16 +167,20 @@ class _ItemsPageState extends State<ItemsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      // _containerSample(height: 14, width: 140, radius: 4),
                       const SizeTransitionAnimation(key: ValueKey(1), height: 14, width: 140, radius: 4),
                       const SizedBox(height: 8),
+                      // _containerSample(height: 14, width: 140, radius: 4),
                       const SizeTransitionAnimation(key: ValueKey(2), height: 12, width: 70, radius: 4),
                       const SizedBox(height: 8),
+                      // _containerSample(height: 14, width: 140, radius: 4),
                       const SizeTransitionAnimation(key: ValueKey(3), height: 14, width: 100, radius: 4),
                       Expanded(child: Container()),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          SizeTransitionAnimation(key: UniqueKey(), height: 14, width: 150, radius: 4),
+                        children: const [
+                          SizeTransitionAnimation(
+                              key: ValueKey(4), height: 14, width: 150, radius: 4),
                         ],
                       ),
                     ],
@@ -216,7 +221,7 @@ class _SizeTransitionAnimationState extends State<SizeTransitionAnimation>
 
   late Animation<double> animation = CurvedAnimation(
     parent: controller,
-    curve: Curves.easeInOut ,// Curve.~Cubic(0.9, 0.9, 0.9, 1.0)
+    curve: Curves.easeInOut, // Curve.~Cubic(0.9, 0.9, 0.9, 1.0)
   );
 
   @override
