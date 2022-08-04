@@ -43,7 +43,7 @@ class UserController extends GetxController {
       _user.value = user;
       Get.offAllNamed('/');
       await _setNewUser(user);
-      logger.d('(_setNewUser) user status - $user');
+      logger.d('(_setNewUser/listen) user status - $user');
     });
   }
 
