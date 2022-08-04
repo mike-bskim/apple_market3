@@ -28,7 +28,7 @@ class _AuthPageState extends State<AuthPage> {
 
   final TextEditingController _codeController = TextEditingController();
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>(debugLabel: 'authPage');
 
   // 인증단계 flag
   VerificationStatus _verificationStatus = VerificationStatus.none;
@@ -49,7 +49,7 @@ class _AuthPageState extends State<AuthPage> {
           // 인증 단계에서는 화면의 모든 터치를 무시한다
           ignoring: _verificationStatus == VerificationStatus.verifying,
           child: Form(
-            key: _formKey,
+            key: formKey,
             child: Scaffold(
               appBar: AppBar(
                 title: Text(
@@ -111,8 +111,8 @@ class _AuthPageState extends State<AuthPage> {
                           if (_verificationStatus == VerificationStatus.codeSending) {
                             return;
                           }
-                          if (_formKey.currentState != null) {
-                            bool passed = _formKey.currentState!.validate();
+                          if (formKey.currentState != null) {
+                            bool passed = formKey.currentState!.validate();
                             if (passed) {
                               var phoneNum = _phoneNumberController.text;
                               phoneNum = phoneNum.replaceAll(' ', '');

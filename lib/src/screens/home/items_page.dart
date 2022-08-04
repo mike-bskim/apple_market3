@@ -23,7 +23,7 @@ class _ItemsPageState extends State<ItemsPage> {
         final imgSize = size.width / 4;
 
         return FutureBuilder(
-            future: Future.delayed(const Duration(seconds: 3)),
+            future: Future.delayed(const Duration(seconds: 1)),
             builder: (context, snapshot) {
               return AnimatedSwitcher(
                 duration: const Duration(seconds: 1),
@@ -143,7 +143,7 @@ class _ItemsPageState extends State<ItemsPage> {
       highlightColor: Colors.grey[100]!,
       enabled: true,
       baseColor: Colors.grey[300]!,
-      period: const Duration(seconds: 2),
+      period: const Duration(seconds: 1),
       child: ListView.separated(
         padding: const EdgeInsets.all(padding_16),
         separatorBuilder: (context, index) {
@@ -167,20 +167,21 @@ class _ItemsPageState extends State<ItemsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      // _containerSample(height: 14, width: 140, radius: 4),
-                      const SizeTransitionAnimation(key: ValueKey(1), height: 14, width: 140, radius: 4),
+                      _containerSample(height: 14, width: 140, radius: 4),
+                      // const SizeTransitionAnimation(key: ValueKey(1), height: 14, width: 140, radius: 4),
                       const SizedBox(height: 8),
-                      // _containerSample(height: 14, width: 140, radius: 4),
-                      const SizeTransitionAnimation(key: ValueKey(2), height: 12, width: 70, radius: 4),
+                      _containerSample(height: 12, width: 70, radius: 4),
+                      // const SizeTransitionAnimation(key: ValueKey(2), height: 12, width: 70, radius: 4),
                       const SizedBox(height: 8),
-                      // _containerSample(height: 14, width: 140, radius: 4),
-                      const SizeTransitionAnimation(key: ValueKey(3), height: 14, width: 100, radius: 4),
+                      _containerSample(height: 14, width: 100, radius: 4),
+                      // const SizeTransitionAnimation(key: ValueKey(3), height: 14, width: 100, radius: 4),
                       Expanded(child: Container()),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
-                          SizeTransitionAnimation(
-                              key: ValueKey(4), height: 14, width: 150, radius: 4),
+                        children: [
+                          _containerSample(height: 14, width: 150, radius: 4),
+                          // SizeTransitionAnimation(
+                          //     key: ValueKey(4), height: 14, width: 150, radius: 4),
                         ],
                       ),
                     ],
@@ -195,6 +196,7 @@ class _ItemsPageState extends State<ItemsPage> {
   }
 }
 
+/*
 class SizeTransitionAnimation extends StatefulWidget {
   final double height;
   final double width;
@@ -261,3 +263,4 @@ class _SizeTransitionAnimationState extends State<SizeTransitionAnimation>
     );
   }
 }
+*/

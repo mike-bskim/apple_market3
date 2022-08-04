@@ -23,7 +23,7 @@ class UserController extends GetxController {
   void onInit() {
     // getx 인스턴스 생성전에 호출됨, 인스턴스와 관련된 것을 호출시 주의할것,
     debugPrint('************************* >>> UserController >> onInit');
-    initUser();
+    // initUser();
     super.onInit();
   }
 
@@ -32,8 +32,8 @@ class UserController extends GetxController {
     // TODO: implement onReady
     super.onReady();
     debugPrint('************************* >>> UserController >> onReady');
-    // initUser();
-    logger.d('(onReady)user status - $user');
+    initUser();
+    // logger.d('(onReady)user status - $user');
   }
 
   void initUser() {
