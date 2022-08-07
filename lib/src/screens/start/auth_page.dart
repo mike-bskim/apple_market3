@@ -28,7 +28,8 @@ class _AuthPageState extends State<AuthPage> {
 
   final TextEditingController _codeController = TextEditingController();
 
-  GlobalKey<FormState> formKey = GlobalKey<FormState>(debugLabel: 'authPage');
+  // GlobalKey<FormState> formKey = GlobalKey<FormState>(debugLabel: 'authPage');
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   // 인증단계 flag
   VerificationStatus _verificationStatus = VerificationStatus.none;

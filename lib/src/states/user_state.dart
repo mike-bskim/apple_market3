@@ -16,7 +16,6 @@ class UserController extends GetxController {
   final _userModel = Rxn<UserModel1?>();
 
   Rxn<User?> get user => _user;
-
   Rxn<UserModel1?> get userModel => _userModel;
 
   @override
@@ -39,7 +38,7 @@ class UserController extends GetxController {
   void initUser() {
     FirebaseAuth.instance.authStateChanges().listen((user) async {
       // user 정보가 변경되면, 호출됨,
-      debugPrint('************************* >>> UserController >> listen');
+      debugPrint('************************* (UserController/listen)');
       _user.value = user;
       Get.offAllNamed('/');
       await _setNewUser(user);

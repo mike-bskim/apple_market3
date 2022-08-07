@@ -12,7 +12,7 @@ class CheckAuth extends GetMiddleware {
 
   @override
   RouteSettings? redirect(String? route) {
-    debugPrint('*************************(CheckAuth): ' + UserController.to.hashCode.toString());
+    debugPrint('************************* (CheckAuth): ' + UserController.to.hashCode.toString());
 
     if (UserController.to.user.value == null) {
       return const RouteSettings(name: '/auth');
