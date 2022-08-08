@@ -73,71 +73,92 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
 // ... 으로 시작하면 기존 리스트에 새로운 결과(List.generate 결과)를 추가할 수 있다.
               ...List.generate(
                 20,
-                (index) => Padding(
-                  // 패딩 - 위에서 전체를 16으로 처리해서 여기서는 위/아래/오른쪽만 16 처리할 것,
-                  padding:
-                      const EdgeInsets.only(right: padding_16, top: padding_16, bottom: padding_16),
-                  child: ExtendedImage.network(
-                    'https://picsum.photos/200',
-                    width: imgSize,
-                    height: imgSize,
-                    fit: BoxFit.cover,
-                    // shape 을 지정해야만 borderRadius 설정이 정상 동작함,
-                    borderRadius: BorderRadius.circular(padding_16),
-                    shape: BoxShape.rectangle,
-                  ),
+                (index) => Stack(
+                  children: [
+                    Padding(
+                      // 패딩 - 위에서 전체를 16으로 처리해서 여기서는 위/아래/오른쪽만 16 처리할 것,
+                      padding:
+                          const EdgeInsets.only(right: padding_16, top: padding_16, bottom: padding_16),
+                      child: ExtendedImage.network(
+                        'https://picsum.photos/200',
+                        width: imgSize,
+                        height: imgSize,
+                        fit: BoxFit.cover,
+                        // shape 을 지정해야만 borderRadius 설정이 정상 동작함,
+                        borderRadius: BorderRadius.circular(padding_16),
+                        shape: BoxShape.rectangle,
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      // IconButton 의 기본 사이즈는 24 이므로 패딩 8 을 더해서 40 으로 설정,
+                      width: 40,
+                      height: 40,
+                      child: IconButton(
+                        padding: const EdgeInsets.all(8),
+                        onPressed: () {
+                          // selectImageNotifier.removeImage(index);
+                          debugPrint('remove picture $index');
+                        },
+                        icon: const Icon(Icons.remove_circle),
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              // ...List.generate(10,
-              //   // selectImageNotifier.images.length,
-              //   // _images.length,
-              //       (index) => Stack(
-              //     children: <Widget>[
-              //       Padding(
-              //         padding: const EdgeInsets.only(
-              //             right: padding_16, top: padding_16, bottom: padding_16),
-              //         // future 타입을 변환해야 함.
-              //         child: ExtendedImage.memory(
-              //           // selectImageNotifier.images[index],
-              //           'https://picsum.photos/200',
-              //           width: imgSize,
-              //           height: imgSize,
-              //           fit: BoxFit.cover,
-              //           loadStateChanged: (state) {
-              //             switch (state.extendedImageLoadState) {
-              //               case LoadState.loading:
-              //                 return Container(
-              //                     width: imgSize,
-              //                     height: imgSize,
-              //                     padding: const EdgeInsets.all(padding_16 * 2),
-              //                     child: const CircularProgressIndicator());
-              //               case LoadState.completed:
-              //                 return null;
-              //               case LoadState.failed:
-              //                 return const Icon(Icons.cancel);
-              //             }
-              //           },
-              //           borderRadius: BorderRadius.circular(padding_16),
-              //           shape: BoxShape.rectangle,
-              //         ),
-              //       ),
-              //       Positioned(
-              //         top: 0,
-              //         right: 0,
-              //         width: 40,
-              //         height: 40,
-              //         child: IconButton(
-              //           padding: const EdgeInsets.all(8),
-              //           onPressed: () {
-              //             // selectImageNotifier.removeImage(index);
-              //           },
-              //           icon: const Icon(Icons.remove_circle),
-              //           color: Colors.black54,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
+//               ...List.generate(20,
+//                 // selectImageNotifier.images.length,
+//                 // _images.length,
+//                     (index) => Stack(
+//                   children: <Widget>[
+//                     Padding(
+//                       padding: const EdgeInsets.only(
+//                           right: padding_16, top: padding_16, bottom: padding_16),
+//                       // future 타입을 변환해야 함.
+//                       child: ExtendedImage.network( // memory
+//                         // selectImageNotifier.images[index],
+//                         'https://picsum.photos/200',
+//                         width: imgSize,
+//                         height: imgSize,
+//                         fit: BoxFit.cover,
+//                         loadStateChanged: (state) {
+//                           switch (state.extendedImageLoadState) {
+//                             case LoadState.loading:
+//                               return Container(
+//                                   width: imgSize,
+//                                   height: imgSize,
+//                                   padding: const EdgeInsets.all(padding_16 * 2),
+//                                   child: const CircularProgressIndicator());
+//                             case LoadState.completed:
+//                               return null;
+//                             case LoadState.failed:
+//                               return const Icon(Icons.cancel);
+//                           }
+//                         },
+//                         borderRadius: BorderRadius.circular(padding_16),
+//                         shape: BoxShape.rectangle,
+//                       ),
+//                     ),
+//                     Positioned(
+//                       top: 0,
+//                       right: 0,
+//                       width: 40,
+//                       height: 40,
+//                       child: IconButton(
+//                         padding: const EdgeInsets.all(8),
+//                         onPressed: () {
+//                           // selectImageNotifier.removeImage(index);
+//                           debugPrint('remove picture $index');
+//                         },
+//                         icon: const Icon(Icons.remove_circle),
+//                         color: Colors.black54,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
             ],
           ),
         );
