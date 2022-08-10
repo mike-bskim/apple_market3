@@ -6,7 +6,7 @@ A new Flutter project.
 
 환경은 flutter 3 버전입니다.
 
-appbar in new page 까지
+price input with formatter 까지
 
 유저위치, 전화번호, 주소, 프로파일 이미지,
 location(lat, long) -> geofire  이게 있어야 주위 데이터를 찾기 쉬움
