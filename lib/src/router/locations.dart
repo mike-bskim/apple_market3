@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
 
 import '../middleware/check_auth.dart';
+import '../screens/input/category_input_page.dart';
 import '../screens/input/input_screen.dart';
 import '../screens/start/start_screen.dart';
 import '../screens/home/home_screen.dart';
+import '../states/category_controller.dart';
 
 // GETx 관련
 List<GetPage<dynamic>> getPages() {
@@ -21,6 +23,15 @@ List<GetPage<dynamic>> getPages() {
     GetPage(
       name: '/input',
       page: () => const InputScreen(),
+      transition: Transition.fadeIn,
+      binding: BindingsBuilder((){
+        Get.put(CategoryController());
+      }),
+      middlewares: [CheckAuth()], // 미들웨어를 먼저 확인(로그인 여부 확인)하고 "page:" 로 이동함
+    ),
+    GetPage(
+      name: '/category_input',
+      page: () => const CategoryInputPage(),
       transition: Transition.fadeIn,
       middlewares: [CheckAuth()], // 미들웨어를 먼저 확인(로그인 여부 확인)하고 "page:" 로 이동함
     ),

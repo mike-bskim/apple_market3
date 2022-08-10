@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../states/user_state.dart';
+import '../states/user_controller.dart';
 // import '../utils/logger.dart';
 
 class CheckAuth extends GetMiddleware {

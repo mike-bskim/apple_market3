@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'bindings/init_binding.dart';
 // import 'constants/common_size.dart';
 import 'router/locations.dart';
-// import 'states/user_state.dart';
+// import 'states/user_controller.dart';
 
 // // beamer 관련
 // final _routerDelegate = BeamerDelegate(

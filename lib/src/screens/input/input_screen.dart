@@ -4,6 +4,7 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 import 'package:get/get.dart';
 import 'multi_image_select.dart';
+import '../../states/category_controller.dart';
 import '../../constants/common_size.dart';
 
 class InputScreen extends StatefulWidget {
@@ -149,13 +150,16 @@ class _InputScreenState extends State<InputScreen> {
                   ),
                 ),
                 dividerCustom,
-                // 카타고리 영역
+// 카테고리 영역 ********************************************************
                 ListTile(
                   onTap: () {
                     debugPrint('/LOCATION_INPUT/LOCATION_CATEGORY_INPUT');
+                    Get.toNamed('/category_input');
                   },
                   dense: true,
-                  title: const Text('선택'),
+                  title: Obx((){
+                    return Text(CategoryController.to.currentCategoryInKor);
+                  }),
                   trailing: const Icon(Icons.navigate_next),
                 ),
                 dividerCustom,
