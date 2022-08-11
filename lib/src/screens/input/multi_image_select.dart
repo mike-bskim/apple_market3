@@ -15,7 +15,8 @@ class MultiImageSelect extends StatefulWidget {
 
 class _MultiImageSelectState extends State<MultiImageSelect> {
   bool _isPickingImages = false;
-  final List<XFile> _images = [];
+  // final List<XFile> _images = [];
+  final List<Uint8List> _images = [];
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,12 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
                     final List<XFile>? images = await _picker.pickMultiImage(imageQuality: 20);
                     if (images != null && images.isNotEmpty) {
                       _images.clear();
-                      _images.addAll(images);
+                      // 이미지 컨버팅을 로딩할때 처리함,
+                      for (int i = 0; i < images.length; i++) {
+                        var xFile = images[i];
+                        _images.add(await xFile.readAsBytes());
+                      }
+                      // _images.addAll(images);
                       // await context.read<SelectImageNotifier>().setNewImages(images);
                     }
                     _isPickingImages = false;
@@ -87,35 +93,28 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
                           right: padding_16, top: padding_16, bottom: padding_16),
                       // child: ExtendedImage.network(
                       // 변수(메모리)에 있는 이미지를 보여주기 위해서 ExtendedImage.memory 사용하고,
-                      // 이미지를 화면에 보여주려면 FutureBuilder 로 wrapping 필요함
-                      child: FutureBuilder<Uint8List>(
-                          future: _images[index].readAsBytes(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return ExtendedImage.memory(
-                                // 'https://picsum.photos/200',
-                                snapshot.data!,
-                                width: imgSize,
-                                height: imgSize,
-                                fit: BoxFit.cover,
-                                loadStateChanged: (state) {
-                                  switch (state.extendedImageLoadState) {
-                                    case LoadState.loading:
-                                      return const Center(child: CircularProgressIndicator());
-                                    case LoadState.completed:
-                                      return null;
-                                    case LoadState.failed:
-                                      return const Icon(Icons.cancel);
-                                  }
-                                },
-                                // shape 을 지정해야만 borderRadius 설정이 정상 동작함,
-                                borderRadius: BorderRadius.circular(padding_16),
-                                shape: BoxShape.rectangle,
-                              );
-                            } else {
-                              return const CircularProgressIndicator();
-                            }
-                          }),
+                      // 이미지를 화면에 보여주려면 컨버팅이 필요해서 FutureBuilder 로 wrapping 필요함,
+                      // 이미지 컨버팅을 로딩할때 처리해서 FutureBuilder 가 필요없어서 삭제함,
+                      child: ExtendedImage.memory(
+                        _images[index],
+                        width: imgSize,
+                        height: imgSize,
+                        fit: BoxFit.cover,
+                        // 이미지 로딩중 각 이미지별로 인디케이터 처리함,
+                        loadStateChanged: (state) {
+                          switch (state.extendedImageLoadState) {
+                            case LoadState.loading:
+                              return const Center(child: CircularProgressIndicator());
+                            case LoadState.completed:
+                              return null;
+                            case LoadState.failed:
+                              return const Icon(Icons.cancel);
+                          }
+                        },
+                        // shape 을 지정해야만 borderRadius 설정이 정상 동작함,
+                        borderRadius: BorderRadius.circular(padding_16),
+                        shape: BoxShape.rectangle,
+                      ),
                     ),
                     Positioned(
                       top: 0,
