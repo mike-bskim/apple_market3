@@ -18,6 +18,7 @@ location(lat, long) -> geofire  이게 있어야 주위 데이터를 찾기 쉬�
   use firebase core,
   add firebase auth package.
   Phone auth Testing,
+  pick images form gallery
 
 ## Getting Started
 

@@ -1,6 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../constants/common_size.dart';
 
@@ -13,6 +15,7 @@ class MultiImageSelect extends StatefulWidget {
 
 class _MultiImageSelectState extends State<MultiImageSelect> {
   bool _isPickingImages = false;
+  final List<XFile> _images = [];
 
   @override
   Widget build(BuildContext context) {
@@ -34,18 +37,21 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
                 // 패딩 - 여기서는 전체를 16으로 처리해서 아래는 위/아래/오른쪽만 16 처리할 것,
                 padding: const EdgeInsets.all(padding_16),
                 child: InkWell(
+                  // onTap 에서 이미지를 List<XFile> 타입 배열에 추가,
                   onTap: () async {
-                    // _isPickingImages = true;
-                    // setState(() {});
+                    _isPickingImages = true;
+                    setState(() {});
 
-                    // final ImagePicker _picker = ImagePicker();
-                    // // Pick multiple images
-                    // final List<XFile>? images = await _picker.pickMultiImage(imageQuality: 20);
-                    // if (images != null && images.isNotEmpty) {
-                    //   await context.read<SelectImageNotifier>().setNewImages(images);
-                    // }
-                    // _isPickingImages = false;
-                    // setState(() {});
+                    final ImagePicker _picker = ImagePicker();
+                    // Pick multiple images
+                    final List<XFile>? images = await _picker.pickMultiImage(imageQuality: 20);
+                    if (images != null && images.isNotEmpty) {
+                      _images.clear();
+                      _images.addAll(images);
+                      // await context.read<SelectImageNotifier>().setNewImages(images);
+                    }
+                    _isPickingImages = false;
+                    setState(() {});
                   },
                   child: Container(
                     width: imgSize,
@@ -72,22 +78,44 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
 // 중복되는 사진 부분 구현
 // ... 으로 시작하면 기존 리스트에 새로운 결과(List.generate 결과)를 추가할 수 있다.
               ...List.generate(
-                20,
+                _images.length,
                 (index) => Stack(
                   children: [
                     Padding(
                       // 패딩 - 위에서 전체를 16으로 처리해서 여기서는 위/아래/오른쪽만 16 처리할 것,
-                      padding:
-                          const EdgeInsets.only(right: padding_16, top: padding_16, bottom: padding_16),
-                      child: ExtendedImage.network(
-                        'https://picsum.photos/200',
-                        width: imgSize,
-                        height: imgSize,
-                        fit: BoxFit.cover,
-                        // shape 을 지정해야만 borderRadius 설정이 정상 동작함,
-                        borderRadius: BorderRadius.circular(padding_16),
-                        shape: BoxShape.rectangle,
-                      ),
+                      padding: const EdgeInsets.only(
+                          right: padding_16, top: padding_16, bottom: padding_16),
+                      // child: ExtendedImage.network(
+                      // 변수(메모리)에 있는 이미지를 보여주기 위해서 ExtendedImage.memory 사용하고,
+                      // 이미지를 화면에 보여주려면 FutureBuilder 로 wrapping 필요함
+                      child: FutureBuilder<Uint8List>(
+                          future: _images[index].readAsBytes(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return ExtendedImage.memory(
+                                // 'https://picsum.photos/200',
+                                snapshot.data!,
+                                width: imgSize,
+                                height: imgSize,
+                                fit: BoxFit.cover,
+                                loadStateChanged: (state) {
+                                  switch (state.extendedImageLoadState) {
+                                    case LoadState.loading:
+                                      return const Center(child: CircularProgressIndicator());
+                                    case LoadState.completed:
+                                      return null;
+                                    case LoadState.failed:
+                                      return const Icon(Icons.cancel);
+                                  }
+                                },
+                                // shape 을 지정해야만 borderRadius 설정이 정상 동작함,
+                                borderRadius: BorderRadius.circular(padding_16),
+                                shape: BoxShape.rectangle,
+                              );
+                            } else {
+                              return const CircularProgressIndicator();
+                            }
+                          }),
                     ),
                     Positioned(
                       top: 0,
@@ -100,6 +128,8 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
                         onPressed: () {
                           // selectImageNotifier.removeImage(index);
                           debugPrint('remove picture $index');
+                          _images.removeAt(index);
+                          setState(() {});
                         },
                         icon: const Icon(Icons.remove_circle),
                         color: Colors.black54,

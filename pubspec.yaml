@@ -52,6 +52,7 @@ dependencies:
 #  animations: ^2.0.3
   cloud_firestore: ^3.4.3
   geoflutterfire: ^3.0.3
+  image_picker: ^0.8.5+3
 
 dev_dependencies:
   flutter_test:
