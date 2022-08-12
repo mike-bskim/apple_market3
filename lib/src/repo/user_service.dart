@@ -32,7 +32,9 @@ class UserService {
     FirebaseFirestore.instance.collection(COL_USERS).doc(userKey);
     final DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await docRef.get();
 
+    // UserModel 의 경우는 fromJson 을 수정하여 1줄로 코딩을 처리해야 가능,
     // UserModel userModel = UserModel.fromSnapshot(documentSnapshot);
+    // UserModel1 의 경우는 fromJson 이 factory 패턴이므로 2줄로 코딩을 처리해야 함,
     UserModel1 userModel1 = UserModel1.fromJson(documentSnapshot.data()!);
     userModel1.reference = documentSnapshot.reference;
     // debugPrint('--------------------------------------------------');

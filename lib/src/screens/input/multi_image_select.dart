@@ -49,8 +49,7 @@ class _MultiImageSelectState extends State<MultiImageSelect> {
                     if (images != null && images.isNotEmpty) {
                       _images.clear();
                       // 이미지 컨버팅을 로딩할때 처리함,
-                      for (int i = 0; i < images.length; i++) {
-                        var xFile = images[i];
+                      for (var xFile in images) {
                         _images.add(await xFile.readAsBytes());
                       }
                       // _images.addAll(images);
