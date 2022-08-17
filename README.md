@@ -6,12 +6,13 @@ A new Flutter project.
 
 환경은 flutter 3 버전입니다.
 
-remove images from picked images 까지
+images not showing after select(fixed) 까지
 
 유저위치, 전화번호, 주소, 프로파일 이미지,
 location(lat, long) -> geofire  이게 있어야 주위 데이터를 찾기 쉬움
 생성일, 변경일, doc.id,
 
+sentry flutter - 앱 오류발생시, 에러 로그를 sentry 에서 확인 가능함,
 
 아이폰 오류 설정
   firebase for ios
@@ -19,6 +20,8 @@ location(lat, long) -> geofire  이게 있어야 주위 데이터를 찾기 쉬�
   add firebase auth package.
   Phone auth Testing,
   pick images form gallery
+  set up firebase storage
+  upload image on firebase storage - 컴파일 오류 참고할것, cocoapod 도 업글 필요.
 
 ## Getting Started
 

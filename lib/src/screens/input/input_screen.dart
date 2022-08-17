@@ -1,11 +1,18 @@
+import 'dart:typed_data';
+
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
-
 import 'package:get/get.dart';
-import 'multi_image_select.dart';
+
+import '../../models/item_model.dart';
+import '../../repo/image_storage.dart';
+import '../../utils/logger.dart';
 import '../../states/category_controller.dart';
+import '../../states/select_image_controller.dart';
 import '../../constants/common_size.dart';
+import 'multi_image_select.dart';
 
 class InputScreen extends StatefulWidget {
   const InputScreen({Key? key}) : super(key: key);
@@ -36,46 +43,49 @@ class _InputScreenState extends State<InputScreen> {
     super.dispose();
   }
 
-  // void attemptCreateItem() async {
-  //   if(FirebaseAuth.instance.currentUser == null) return;
-  // 완료 버튼 클릭
-  // Navigator.of(context).pop();
-  // isCreatingItem = true;
-  // setState(() {});
+  void attemptCreateItem() async {
+    if (FirebaseAuth.instance.currentUser == null) return;
+    // 완료 버튼 클릭
+    isCreatingItem = true;
+    // setState 해줘야 인디케이터가 동작한다,
+    setState(() {});
 
-  // final String userKey = FirebaseAuth.instance.currentUser!.uid;
-  // final String userPhone = FirebaseAuth.instance.currentUser!.phoneNumber!;
-  // final String itemKey = ItemModel.generateItemKey(userKey);
-  // List<Uint8List> images = context.read<SelectImageNotifier>().images;
-  // List<String> downloadUrls = await ImageStorage.uploadImage(images, itemKey);
-  // final num? price = num.tryParse(_priceController.text.replaceAll('.', '').replaceAll(' 원', ''));
-  // final num? price = num.tryParse(_priceController.text.replaceAll(RegExp(r'\D'), ''));
-  // UserNotifier userNotifier = context.read<UserNotifier>();
+    final String userKey = FirebaseAuth.instance.currentUser!.uid;
+    final String userPhone = FirebaseAuth.instance.currentUser!.phoneNumber!;
+    final String itemKey = ItemModel2.generateItemKey(userKey);
+    List<Uint8List> images = SelectImageController.to.images;
+    // uploading raw data and return the Urls,
+    List<String> downloadUrls = await ImageStorage.uploadImage(images, itemKey);
+    // final num? price = num.tryParse(_priceController.text.replaceAll('.', '').replaceAll(' 원', ''));
+    final num? price = num.tryParse(_priceController.text.replaceAll(RegExp(r'\D'), ''));
+    // UserNotifier userNotifier = context.read<UserNotifier>();
 
-  // if(userNotifier.userModel == null) {
-  //   return ;
-  // }
-  // logger.d(downloadUrls);
+    // if (UserController.to.userModel == null) {
+    //   return;
+    // }
+    logger.d('upload finished(${downloadUrls.length}) : $downloadUrls');
 
-  // ItemModel itemModel = ItemModel(
-  //   itemKey: itemKey,
-  //   userKey: userKey,
-  //   userPhone: userPhone,
-  //   imageDownloadUrls: downloadUrls,
-  //   title: _titleController.text,
-  //   category: context.read<CategoryNotifier>().currentCategoryInEng,
-  //   price: price??0,
-  //   negotiable: _suggestPriceSelected,
-  //   detail: _detailController.text,
-  //   address: userNotifier.userModel!.address,
-  //   geoFirePoint: userNotifier.userModel!.geoFirePoint,
-  //   createdDate: DateTime.now().toUtc(),
-  // );
+    // ItemModel2 itemModel = ItemModel2(
+    //   itemKey: itemKey,
+    //   userKey: userKey,
+    //   userPhone: userPhone,
+    //   imageDownloadUrls: downloadUrls,
+    //   title: _titleController.text,
+    //   category: CategoryController.to.currentCategoryInEng,
+    //   price: price ?? 0,
+    //   negotiable: _suggestPriceSelected,
+    //   detail: _detailController.text,
+    //   address: UserController.to.userModel.value!.address,
+    //   //userNotifier.userModel!.address,
+    //   geoFirePoint: UserController.to.userModel.value!.geoFirePoint,
+    //   //userNotifier.userModel!.geoFirePoint,
+    //   createdDate: DateTime.now().toUtc(),
+    // );
 
-  // await ItemService().createNewItem(itemModel, itemKey, userNotifier.user!.uid);
+    // await ItemService().createNewItem(itemModel, itemKey, userNotifier.user!.uid);
 
-  // Get.back();
-  // }
+    Get.back();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,11 +99,11 @@ class _InputScreenState extends State<InputScreen> {
             appBar: AppBar(
               centerTitle: true,
               // leading 을 통해서 back 버튼을 "뒤로" 버튼으로 대체할 수 있음.
+              leadingWidth: 55.0,
               leading: TextButton(
                 onPressed: () {
                   debugPrint('뒤로가기 버튼 클릭');
                   Get.back();
-                  // context.beamBack();
                 },
                 style: TextButton.styleFrom(
                   primary: Colors.black,
@@ -105,20 +115,19 @@ class _InputScreenState extends State<InputScreen> {
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
               ),
+              // 로딩중일때,
               bottom: PreferredSize(
-                preferredSize: Size(_size.width, 2),
-                child: isCreatingItem
-                    ? const LinearProgressIndicator(
-                        minHeight: 2,
-                      )
-                    : Container(),
+                preferredSize: Size(_size.width, 3),
+                child: isCreatingItem ? const LinearProgressIndicator(minHeight: 3) : Container(),
               ),
               actions: <Widget>[
                 TextButton(
-                  onPressed: () {}, //attemptCreateItem,
+                  onPressed: attemptCreateItem,
                   style: TextButton.styleFrom(
                     primary: Colors.black,
                     backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+                    // 완료와 뒤로 버튼 사이즈를 조정함,
+                    minimumSize: const Size(55, 40),
                   ),
                   child: Text(
                     '완료',
@@ -157,7 +166,7 @@ class _InputScreenState extends State<InputScreen> {
                     Get.toNamed('/category_input');
                   },
                   dense: true,
-                  title: Obx((){
+                  title: Obx(() {
                     return Text(CategoryController.to.currentCategoryInKor);
                   }),
                   trailing: const Icon(Icons.navigate_next),

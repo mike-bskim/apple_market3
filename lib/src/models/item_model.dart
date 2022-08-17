@@ -29,7 +29,6 @@ import '../constants/data_keys.dart';
 }
 */
 
-
 // https://app.quicktype.io/ 사이트를 이용해서 변환 후, 약간의 수작업,
 //     final itemModel2 = itemModel2FromJson(jsonString);
 
@@ -44,7 +43,7 @@ class ItemModel2 {
   List<String> imageDownloadUrls;
   String title;
   String category;
-  int price;
+  num price;
   bool negotiable;
   String detail;
   String address;
@@ -104,8 +103,13 @@ class ItemModel2 {
         "createdDate": createdDate,
         // "reference": reference,
       };
-}
 
+  static String generateItemKey(String uid) {
+    String timeInMilli = DateTime.now().millisecondsSinceEpoch.toString();
+
+    return '${uid}_$timeInMilli';
+  }
+}
 
 // Json to Dart 플러그인을 이용해서 변환 후, 약간의 수작업,
 
@@ -201,5 +205,11 @@ class ItemModel {
     map['createdDate'] = createdDate;
     // map['reference'] = reference;
     return map;
+  }
+
+  static String generateItemKey(String uid) {
+    String timeInMilli = DateTime.now().millisecondsSinceEpoch.toString();
+
+    return '${uid}_$timeInMilli';
   }
 }
