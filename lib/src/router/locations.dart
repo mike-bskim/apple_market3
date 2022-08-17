@@ -6,6 +6,7 @@ import '../screens/input/input_screen.dart';
 import '../screens/start/start_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../states/category_controller.dart';
+import '../states/select_image_controller.dart';
 
 // GETx 관련
 List<GetPage<dynamic>> getPages() {
@@ -26,6 +27,7 @@ List<GetPage<dynamic>> getPages() {
       transition: Transition.fadeIn,
       binding: BindingsBuilder((){
         Get.put(CategoryController());
+        Get.put(SelectImageController());
       }),
       middlewares: [CheckAuth()], // 미들웨어를 먼저 확인(로그인 여부 확인)하고 "page:" 로 이동함
     ),

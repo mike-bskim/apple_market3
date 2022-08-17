@@ -5,8 +5,11 @@ import 'dart:convert';
 import '../constants/data_keys.dart';
 
 // 개념정리용 참고 영상.
-// https://www.youtube.com/watch?v=xFi43Ushq9I
 // https://www.youtube.com/watch?v=dYzbnge59TM
+// https://www.youtube.com/watch?v=xFi43Ushq9I
+// https://funncy.github.io/flutter/2021/03/06/firestore/
+// https://firebase.flutter.dev/docs/firestore/usage/
+// https://scarygami.medium.com/cloud-firestore-quicktip-documentsnapshot-vs-querysnapshot-70aef6d57ab3
 
 /* 모델링 샘플 데이터
 {
