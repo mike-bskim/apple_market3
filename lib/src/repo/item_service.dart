@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:geoflutterfire/geoflutterfire.dart';
 
 import '../constants/data_keys.dart';
 import '../models/item_model.dart';
@@ -9,7 +8,9 @@ class ItemService {
   // 싱글톤 디자인 패턴 ***************************************
   // 인스턴스가 한번만 생성되고, 2번째 생성시에는 처음 생성한 인스턴스를 리턴,
   static final ItemService _itemService = ItemService._internal();
+
   factory ItemService() => _itemService;
+
   ItemService._internal();
 
   Future createNewItem(ItemModel2 itemModel, String itemKey, String userKey) async {
@@ -19,8 +20,7 @@ class ItemService {
     final DocumentSnapshot documentSnapshot = await itemDocRef.get();
 
     // 신규 작성글을 사용자 정보의 하위 콜랙션에 추가, No SQL 에서는 역정규화 하는것이 좋을때가 있음,
-    DocumentReference<Map<String, dynamic>> userItemDocRef = FirebaseFirestore
-        .instance
+    DocumentReference<Map<String, dynamic>> userItemDocRef = FirebaseFirestore.instance
         .collection(COL_USERS)
         .doc(userKey)
         .collection(COL_USER_ITEMS)
@@ -37,42 +37,46 @@ class ItemService {
     }
   }
 
-  // Future<ItemModel2> getItem(String itemKey) async {
-  //   if (itemKey[0] == ':') {
-  //     String orgItemKey = itemKey;
-  //     itemKey = itemKey.substring(1);
-  //     logger.d('[${orgItemKey.substring(0, 10)}...], ==>> [${itemKey.substring(0, 9)}...]');
-  //   }
-  //   DocumentReference<Map<String, dynamic>> docRef =
-  //       FirebaseFirestore.instance.collection(COL_ITEMS).doc(itemKey);
-  //   final DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await docRef.get();
-  //
-  //   // fromSnapshot 이거 대체, 2줄 코딩으로 변경함,
-  //   ItemModel2 itemModel = ItemModel2.fromJson(documentSnapshot.data()!);
-  //   itemModel.reference = documentSnapshot.reference;
-  //
-  //   return itemModel;
-  // }
+  Future<ItemModel2> getItem(String itemKey) async {
+    if (itemKey[0] == ':') {
+      String orgItemKey = itemKey;
+      itemKey = itemKey.substring(1);
+      logger.d('[${orgItemKey.substring(0, 10)}...], ==>> [${itemKey.substring(0, 9)}...]');
+    }
+    DocumentReference<Map<String, dynamic>> docRef =
+        FirebaseFirestore.instance.collection(COL_ITEMS).doc(itemKey);
+    final DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await docRef.get();
 
-// Future<List<ItemModel2>> getItems(String userKey) async {
-//   logger.d('userKey['+userKey.toString()+']');
-//   CollectionReference<Map<String, dynamic>> collectionReference =
-//   FirebaseFirestore.instance.collection(COL_ITEMS);
-//   // QuerySnapshot<Map<String, dynamic>> snapshots = await collectionReference.get();
-//   QuerySnapshot<Map<String, dynamic>> snapshots = await collectionReference
-//       .where(DOC_USERKEY, isNotEqualTo: userKey)
-//       .get();
-//
-//   List<ItemModel2> items = [];
-//
-//   for (var snapshot in snapshots.docs) {
-//     //fromQuerySnapshot 대체품 만들것,
-//     // ItemModel2 itemModel = ItemModel2.fromQuerySnapshot(snapshot);
-//     items.add(itemModel);
-//   }
-//
-//   return items;
-// }
+    // fromSnapshot 을 대체하려면, 2줄 코딩으로 변경필요함,
+    ItemModel2 itemModel = ItemModel2.fromJson(documentSnapshot.data()!);
+    itemModel.reference = documentSnapshot.reference;
+
+    return itemModel;
+  }
+
+  Future<List<ItemModel2>> getItems(String userKey) async {
+    logger.d('userKey[' + userKey.toString() + ']');
+    CollectionReference<Map<String, dynamic>> collectionReference =
+        FirebaseFirestore.instance.collection(COL_ITEMS);
+    // collection.get() is Future, collection.snapshots() is Stream
+    // 모든 게시글 가져오기
+    QuerySnapshot<Map<String, dynamic>> snapshots = await collectionReference.get();
+    // 자신의 게시글 제외하고 가져오기
+    // QuerySnapshot<Map<String, dynamic>> snapshots =
+    //     await collectionReference.where(DOC_USERKEY, isNotEqualTo: userKey).get();
+
+    List<ItemModel2> items = [];
+
+    for (var snapshot in snapshots.docs) {
+      //fromQuerySnapshot 대체품 만들것,
+      // ItemModel2 itemModel = ItemModel2.fromQuerySnapshot(snapshot);
+      ItemModel2 itemModel = ItemModel2.fromJson(snapshot.data());
+      itemModel.reference = snapshot.reference;
+      items.add(itemModel);
+    }
+
+    return items;
+  }
 
 // Future<List<ItemModel2>> getUserItems(String userKey,
 //     {String? itemKey}) async {
