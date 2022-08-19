@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 
 import '../../models/item_model.dart';
@@ -37,6 +39,8 @@ class _InputScreenState extends State<InputScreen> {
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _detailController = TextEditingController();
+  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+  AutovalidateMode autoValidate = AutovalidateMode.disabled;
 
   @override
   void dispose() {
@@ -51,7 +55,18 @@ class _InputScreenState extends State<InputScreen> {
     // 완료 버튼 클릭
     isCreatingItem = true;
     // setState 해줘야 인디케이터가 동작한다,
-    setState(() {});
+    setState(() {
+      autoValidate = AutovalidateMode.always;
+    });
+
+    final form = _fbKey.currentState;
+    if (form == null || !form.validate()) {
+      isCreatingItem = false;
+      return;
+    }
+    form.save();
+    final inputValues = form.value;
+    debugPrint(inputValues.toString());
 
     final String userKey = FirebaseAuth.instance.currentUser!.uid;
     final String userPhone = FirebaseAuth.instance.currentUser!.phoneNumber!;
@@ -66,23 +81,8 @@ class _InputScreenState extends State<InputScreen> {
       return;
     }
 
-    if (_titleController.text.isEmpty) {
-      dataWarning(context, '확인', '제목을 입력해주세요');
-      return;
-    }
-
     if (CategoryController.to.currentCategoryInEng == 'none') {
       dataWarning(context, '확인', '카테고리를 선택해주세요');
-      return;
-    }
-
-    if (price == null) {
-      dataWarning(context, '확인', '가격을 입력해주세요');
-      return;
-    }
-
-    if (_detailController.text.isEmpty) {
-      dataWarning(context, '확인', '내용을 입력해주세요');
       return;
     }
 
@@ -97,8 +97,7 @@ class _InputScreenState extends State<InputScreen> {
       imageDownloadUrls: downloadUrls,
       title: _titleController.text,
       category: CategoryController.to.currentCategoryInEng,
-      price: price,
-      // price ?? 0
+      price: price ?? 0,
       negotiable: _suggestPriceSelected,
       detail: _detailController.text,
       address: UserController.to.userModel.value!.address,
@@ -180,127 +179,155 @@ class _InputScreenState extends State<InputScreen> {
               ),
             ),
             // 컬럼으로 안하고 ListView 로 하는 이유는 스크롤 기능이 필요해서,
-            body: ListView(
-              children: <Widget>[
-                // 멀티 이미지 영역
-                const MultiImageSelect(),
-                dividerCustom,
-                // 제목영역
-                TextFormField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    hintText: '글제목',
-                    // padding 으로 하지 않고 처리하는 방법,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: padding_16),
-                    border: underLineBorder,
-                    enabledBorder: underLineBorder,
-                    focusedBorder: underLineBorder,
+            body: FormBuilder(
+              key: _fbKey,
+              child: ListView(
+                children: <Widget>[
+                  // 멀티 이미지 영역
+                  const MultiImageSelect(),
+                  dividerCustom,
+// 제목영역 ********************************************************
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: padding_16),
+                    child: TextFormField(
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(errorText: '글제목은 필수입니다'),
+                      ]),
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        hintText: '글제목',
+                        // padding 으로 하지 않고 처리하는 방법,
+                        // contentPadding: const EdgeInsets.symmetric(horizontal: padding_16),
+                        border: underLineBorder,
+                        enabledBorder: underLineBorder,
+                        focusedBorder: underLineBorder,
+                        // error 관련 border 설정
+                        errorBorder: underLineBorder,
+                        focusedErrorBorder: underLineBorder,
+                        // errorStyle: const TextStyle(color: Colors.grey)
+                      ),
+                    ),
                   ),
-                ),
-                dividerCustom,
+                  dividerCustom,
 // 카테고리 영역 ********************************************************
-                ListTile(
-                  onTap: () {
-                    debugPrint('/LOCATION_INPUT/LOCATION_CATEGORY_INPUT');
-                    Get.toNamed('/category_input');
-                  },
-                  dense: true,
-                  title: Obx(() {
-                    return Text(CategoryController.to.currentCategoryInKor);
-                  }),
-                  trailing: const Icon(Icons.navigate_next),
-                ),
-                dividerCustom,
-                Row(
-                  children: <Widget>[
-                    // Expanded 를 처리하여 전체 공간을 차지하게 처리
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: padding_16),
-                        child: TextFormField(
-                          // 숫자만 입력가능하게 설정,
-                          keyboardType: TextInputType.number,
-                          controller: _priceController,
-                          onChanged: (value) {
-                            if ('0 원' == value) {
-                              _priceController.clear();
-                            }
-                            setState(() {});
-                          },
-                          // 입력한 숫자 형식을 지정해주는 옵션,
-                          inputFormatters: [
-                            MoneyInputFormatter(mantissaLength: 0, trailingSymbol: ' 원')
-                          ],
-                          decoration: InputDecoration(
-                            hintText: '가격',
-                            prefixIcon: ImageIcon(
-                              const ExtendedAssetImageProvider('assets/imgs/won.png'),
-                              // 숫자가 입력되면 원화표시 사이 색상이 변경된다,
-                              color: (_priceController.text.isEmpty)
-                                  ? Colors.grey[350]
-                                  : Colors.black87,
+                  ListTile(
+                    onTap: () {
+                      debugPrint('/LOCATION_INPUT/LOCATION_CATEGORY_INPUT');
+                      Get.toNamed('/category_input');
+                    },
+                    dense: true,
+                    title: Obx(() {
+                      return Text(CategoryController.to.currentCategoryInKor);
+                    }),
+                    trailing: const Icon(Icons.navigate_next),
+                  ),
+                  dividerCustom,
+                  Row(
+                    children: <Widget>[
+                      // Expanded 를 처리하여 전체 공간을 차지하게 처리
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: padding_16),
+// 가격입력 ********************************************************
+                          child: TextFormField(
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(errorText: '가격은 필수입니다'),
+                            ]),
+                            // 숫자만 입력가능하게 설정,
+                            keyboardType: TextInputType.number,
+                            controller: _priceController,
+                            onChanged: (value) {
+                              if ('0 원' == value) {
+                                _priceController.clear();
+                              }
+                              setState(() {});
+                            },
+                            // 입력한 숫자 형식을 지정해주는 옵션,
+                            inputFormatters: [
+                              MoneyInputFormatter(mantissaLength: 0, trailingSymbol: ' 원')
+                            ],
+                            decoration: InputDecoration(
+                              hintText: '가격',
+                              prefixIcon: ImageIcon(
+                                const ExtendedAssetImageProvider('assets/imgs/won.png'),
+                                // 숫자가 입력되면 원화표시 사이 색상이 변경된다,
+                                color: (_priceController.text.isEmpty)
+                                    ? Colors.grey[350]
+                                    : Colors.black87,
+                              ),
+                              // prefixIcon 의 사이즈를 결정,
+                              prefixIconConstraints: const BoxConstraints(maxWidth: 20),
+                              contentPadding: const EdgeInsets.symmetric(vertical: padding_08),
+                              border: underLineBorder,
+                              enabledBorder: underLineBorder,
+                              focusedBorder: underLineBorder,
+                              // error 관련 border 설정
+                              errorBorder: underLineBorder,
                             ),
-                            // prefixIcon 의 사이즈를 결정,
-                            prefixIconConstraints: const BoxConstraints(maxWidth: 20),
-                            contentPadding: const EdgeInsets.symmetric(vertical: padding_08),
-                            border: underLineBorder,
-                            enabledBorder: underLineBorder,
-                            focusedBorder: underLineBorder,
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: padding_16),
-                      child: TextButton.icon(
-                        onPressed: () {
-                          // 가격제안 클릭시 토글 방식으로 화면 처리,
-                          setState(() {
-                            _suggestPriceSelected = !_suggestPriceSelected;
-                          });
-                        },
-                        icon: Icon(
-                          _suggestPriceSelected ? Icons.check_circle : Icons.check_circle_outline,
-                          color: _suggestPriceSelected
-                              ? Theme.of(context).primaryColor
-                              : Colors.black54,
-                        ),
-                        label: Text(
-                          '가격제안 받기',
-                          style: TextStyle(
+                      Padding(
+                        padding: const EdgeInsets.only(right: padding_16),
+                        child: TextButton.icon(
+                          onPressed: () {
+                            // 가격제안 클릭시 토글 방식으로 화면 처리,
+                            setState(() {
+                              _suggestPriceSelected = !_suggestPriceSelected;
+                            });
+                          },
+                          icon: Icon(
+                            _suggestPriceSelected ? Icons.check_circle : Icons.check_circle_outline,
                             color: _suggestPriceSelected
                                 ? Theme.of(context).primaryColor
                                 : Colors.black54,
                           ),
+                          label: Text(
+                            '가격제안 받기',
+                            style: TextStyle(
+                              color: _suggestPriceSelected
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.black54,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            primary: Colors.black45,
+                          ),
                         ),
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          primary: Colors.black45,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                dividerCustom,
-                // 올릴 게시글 내용을 작성
-                TextFormField(
-                  controller: _detailController,
-                  // 엔터 줄바꿈 가능하게, 줄수 제한 없애기,
-                  maxLines: null,
-                  // multiline 설정하면 완료키가 엔터키로 변경됨,
-                  keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(
-                    hintText: '올릴 게시글 내용을 작성해주세요',
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: padding_16,
-                      vertical: padding_16,
-                    ),
-                    border: underLineBorder,
-                    enabledBorder: underLineBorder,
-                    focusedBorder: underLineBorder,
+                      )
+                    ],
                   ),
-                ),
-              ],
+                  dividerCustom,
+// 올릴 게시글 내용을 작성
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: padding_16),
+                    child: TextFormField(
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(errorText: '내용을 작성해주세요'),
+                      ]),
+                      controller: _detailController,
+                      // 엔터 줄바꿈 가능하게, 줄수 제한 없애기,
+                      maxLines: null,
+                      // multiline 설정하면 완료키가 엔터키로 변경됨,
+                      keyboardType: TextInputType.multiline,
+
+                      decoration: InputDecoration(
+                        hintText: '올릴 게시글 내용을 작성해주세요',
+                        contentPadding: const EdgeInsets.symmetric(
+                          // horizontal: padding_16,
+                          vertical: padding_16,
+                        ),
+                        border: underLineBorder,
+                        enabledBorder: underLineBorder,
+                        focusedBorder: underLineBorder,
+                        // error 관련 border 설정
+                        errorBorder: underLineBorder,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
