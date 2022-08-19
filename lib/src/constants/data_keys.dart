@@ -35,3 +35,9 @@ const DOC_LASTMSGUSERKEY = 'lastMsgUserKey';
 const DOC_CHATROOMKEY = 'chatroomKey';
 const DOC_CHATKEY = 'chatKey';
 const DOC_MSG = 'msg';
+
+const ROUTE_AUTH = '/auth';
+const ROUTE_MAIN = '/';
+const ROUTE_INPUT = '/input';
+const ROUTE_CATEGORY_INPUT = '/category_input';
+const ROUTE_ITEM_DETAIL = '/item_detail';

@@ -8,6 +8,7 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 
+import '../../constants/data_keys.dart';
 import '../../models/item_model.dart';
 import '../../repo/image_storage.dart';
 import '../../repo/item_service.dart';
@@ -213,7 +214,7 @@ class _InputScreenState extends State<InputScreen> {
                   ListTile(
                     onTap: () {
                       debugPrint('/LOCATION_INPUT/LOCATION_CATEGORY_INPUT');
-                      Get.toNamed('/category_input');
+                      Get.toNamed(ROUTE_CATEGORY_INPUT);
                     },
                     dense: true,
                     title: Obx(() {

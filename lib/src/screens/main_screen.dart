@@ -3,22 +3,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../widgets/expandable_fab.dart';
-import 'items_page.dart';
+import '../constants/data_keys.dart';
+import '../widgets/expandable_fab.dart';
+import 'home/items_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class MainScreen extends StatefulWidget {
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _MainScreenState extends State<MainScreen> {
   int _bottomSelectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("************************* >>> build from HomeScreen");
+    debugPrint("************************* >>> build from MainScreen");
     return Scaffold(
       floatingActionButton: ExpandableFab(
         // distance between button and children,
@@ -26,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: <Widget>[
           MaterialButton(
             onPressed: () {
-              Get.toNamed('/input');
+              Get.toNamed(ROUTE_INPUT);
             },
             shape: const CircleBorder(),
             height: 48,
@@ -75,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: IndexedStack(
         index: _bottomSelectedIndex,
         children: <Widget>[
-          const ItemsPage(),
+          const ItemsScreen(),
           Container(color: Colors.accents[1]),
           Container(color: Colors.accents[3]),
           Container(color: Colors.accents[5]),

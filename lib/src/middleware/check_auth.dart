@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../constants/data_keys.dart';
 import '../states/user_controller.dart';
 // import '../utils/logger.dart';
 
@@ -8,14 +9,12 @@ class CheckAuth extends GetMiddleware {
   @override
   int? get priority => 2;
 
-  bool isAuthenticated = false;
-
   @override
   RouteSettings? redirect(String? route) {
     debugPrint('************************* (CheckAuth): ' + UserController.to.hashCode.toString());
 
     if (UserController.to.user.value == null) {
-      return const RouteSettings(name: '/auth');
+      return const RouteSettings(name: ROUTE_AUTH);
     }
     return null;
   }

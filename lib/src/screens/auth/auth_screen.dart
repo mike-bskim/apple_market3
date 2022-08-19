@@ -5,8 +5,8 @@ import 'address_page.dart';
 import 'auth_page.dart';
 import 'intro_page.dart';
 
-class StartScreen extends StatelessWidget {
-  StartScreen({Key? key}) : super(key: key);
+class AuthScreen extends StatelessWidget {
+  AuthScreen({Key? key}) : super(key: key);
 
   // ~Controller() 끝나는 변수들은 항상 dispose 해야 한다
   // 단, StatelessWidget 에서는 제외
