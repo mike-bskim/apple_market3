@@ -268,7 +268,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                         SliverToBoxAdapter(
                           child: Container(
                             // 스크롤 테스트를 위해서 높이를 길게 적용함,
-                            height: _size!.height * 2,
+                            height: _size!.height,
                             color: Colors.cyan,
                             child: Center(child: Text(newItemKey)),
                           ),
@@ -302,6 +302,14 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                           //     ],
                           //   ),
                           // ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: Container(
+                            // 스크롤 테스트를 위해서 높이를 길게 적용함,
+                            height: _size!.height,
+                            color: Colors.redAccent,
+                            child: Center(child: Text(newItemKey)),
+                          ),
                         ),
                         // SliverToBoxAdapter(
                         //   child: FutureBuilder<List<ItemModel2>>(
@@ -398,26 +406,26 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       // pinned: true 면 앱바 역역을 남기는 역할, false 면 스크롤시 같이 사라짐,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        // centerTitle: true,
+        centerTitle: true,
         // title: const Text('testing', style: TextStyle(color: Colors.black)),
-        // // 타이틀 부분에 인디케이터 표시하고 아래에 위치함, 패키지 추가 필요함,
-        // title: SizedBox(
-        //   child: SmoothPageIndicator(
-        //       controller: _pageController,
-        //       // PageController
-        //       count: itemModel.imageDownloadUrls.length,
-        //       effect: const WormEffect(
-        //         activeDotColor: Colors.white,
-        //         //Theme.of(context).primaryColor,
-        //         dotColor: Colors.white24,
-        //         //Theme.of(context).colorScheme.background,
-        //         radius: 3,
-        //         dotHeight: 6,
-        //         dotWidth: 6,
-        //       ),
-        //       // your preferred effect
-        //       onDotClicked: (index) {}),
-        // ),
+        // 타이틀 부분에 인디케이터 표시하고 아래에 위치함, 패키지 추가 필요함,
+        title: SizedBox(
+          child: SmoothPageIndicator(
+              controller: _pageController,
+              // PageController
+              count: itemModel.imageDownloadUrls.length,
+              effect: const WormEffect(
+                activeDotColor: Colors.black,
+                //Theme.of(context).primaryColor,
+                dotColor: Colors.black45,
+                //Theme.of(context).colorScheme.background,
+                radius: 3,
+                dotHeight: 6,
+                dotWidth: 6,
+              ),
+              // your preferred effect
+              onDotClicked: (index) {}),
+        ),
 
         // background 로 이미지를 넣으면 됨, 이미지 표시
         background: Stack(
@@ -437,24 +445,24 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
               },
               itemCount: itemModel.imageDownloadUrls.length,
             ),
-            Positioned(
-              bottom: padding_16,
-              // 중간으로 위치시키기 위해서 좌/우 0 으로 설정,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: SmoothPageIndicator(
-                    controller: _pageController, // PageController
-                    count: itemModel.imageDownloadUrls.length,
-                    effect: WormEffect(
-                        activeDotColor: Theme.of(context).primaryColor,
-                        dotColor: Theme.of(context).colorScheme.background,
-                        radius: 4,
-                        dotHeight: 8,
-                        dotWidth: 8), // your preferred effect
-                    onDotClicked: (index) {}),
-              ),
-            ),
+            // Positioned(
+            //   bottom: padding_16,
+            //   // 중간으로 위치시키기 위해서 좌/우 0 으로 설정,
+            //   left: 0,
+            //   right: 0,
+            //   child: Center(
+            //     child: SmoothPageIndicator(
+            //         controller: _pageController, // PageController
+            //         count: itemModel.imageDownloadUrls.length,
+            //         effect: WormEffect(
+            //             activeDotColor: Theme.of(context).primaryColor,
+            //             dotColor: Theme.of(context).colorScheme.background,
+            //             radius: 4,
+            //             dotHeight: 8,
+            //             dotWidth: 8), // your preferred effect
+            //         onDotClicked: (index) {}),
+            //   ),
+            // ),
           ],
         ),
       ),
