@@ -1,40 +1,16 @@
-// import 'package:extended_image/extended_image.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../constants/common_size.dart';
 import '../../models/item_model.dart';
 import '../../models/user_model.dart';
 import '../../repo/item_service.dart';
+
 // import '../../states/category_controller.dart';
 import '../../states/user_controller.dart';
 import '../../utils/logger.dart';
-
-// class ItemDetailPage extends StatefulWidget {
-//   const ItemDetailPage({Key? key}) : super(key: key);
-//
-//   @override
-//   State<ItemDetailPage> createState() => _ItemDetailPageState();
-// }
-//
-// class _ItemDetailPageState extends State<ItemDetailPage> {
-//   late String newItemKey;
-//
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     newItemKey = Get.arguments['itemKey'];
-//     super.initState();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(),
-//       body: Center(child: Text(newItemKey)),
-//     );
-//   }
-// }
 
 class ItemDetailPage extends StatefulWidget {
   const ItemDetailPage({Key? key}) : super(key: key);
@@ -44,11 +20,13 @@ class ItemDetailPage extends StatefulWidget {
 }
 
 class _ItemDetailPageState extends State<ItemDetailPage> {
-  // final PageController _pageController = PageController();
+  final PageController _pageController = PageController();
+
   // final ScrollController _scrollController = ScrollController();
 
   // bool isAppbarCollapsed = false;
   Size? _size;
+
   // num? _statusBarHeight;
   late String newItemKey;
 
@@ -96,7 +74,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
 
   @override
   void dispose() {
-    // _pageController.dispose();
+    _pageController.dispose();
     // _scrollController.dispose();
     super.dispose();
   }
@@ -290,7 +268,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                         SliverToBoxAdapter(
                           child: Container(
                             // 스크롤 테스트를 위해서 높이를 길게 적용함,
-                            height: _size!.height*2,
+                            height: _size!.height * 2,
                             color: Colors.cyan,
                             child: Center(child: Text(newItemKey)),
                           ),
@@ -419,12 +397,10 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       expandedHeight: _size!.width,
       // pinned: true 면 앱바 역역을 남기는 역할, false 면 스크롤시 같이 사라짐,
       pinned: true,
-      flexibleSpace: const FlexibleSpaceBar(
-        centerTitle: true,
-        title: Text('testing', style: TextStyle(color: Colors.black),),
-        // background 로 이미지를 넣으면 됨,
-        background: FlutterLogo(),
-        // // 인디케이터 표시
+      flexibleSpace: FlexibleSpaceBar(
+        // centerTitle: true,
+        // title: const Text('testing', style: TextStyle(color: Colors.black)),
+        // // 타이틀 부분에 인디케이터 표시하고 아래에 위치함, 패키지 추가 필요함,
         // title: SizedBox(
         //   child: SmoothPageIndicator(
         //       controller: _pageController,
@@ -442,115 +418,141 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         //       // your preferred effect
         //       onDotClicked: (index) {}),
         // ),
-        // 이미지 표시
-        // background: PageView.builder(
-        //   controller: _pageController,
-        //   allowImplicitScrolling: true,
-        //   itemBuilder: (BuildContext context, int index) {
-        //     return ExtendedImage.network(
-        //       itemModel.imageDownloadUrls[index],
-        //       fit: BoxFit.cover,
-        //       scale: 0.1,
-        //     );
-        //   },
-        //   itemCount: itemModel.imageDownloadUrls.length,
-        // ),
+
+        // background 로 이미지를 넣으면 됨, 이미지 표시
+        background: Stack(
+          children: [
+            // 좌/우로 스크롤 가능하게 처리,
+            PageView.builder(
+              controller: _pageController,
+              // 옆페이지로 이동시 포커스를 옆페이지로 이동시켜 로딩을 미리하게 설정함,
+              allowImplicitScrolling: true,
+              itemBuilder: (BuildContext context, int index) {
+                return ExtendedImage.network(
+                  itemModel.imageDownloadUrls[index],
+                  fit: BoxFit.cover,
+                  // 캐싱을 했지만 다시 로딩하는 경우가 있어서 이미지 사이즈를 줄여줌,
+                  scale: 0.1,
+                );
+              },
+              itemCount: itemModel.imageDownloadUrls.length,
+            ),
+            Positioned(
+              bottom: padding_16,
+              // 중간으로 위치시키기 위해서 좌/우 0 으로 설정,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: SmoothPageIndicator(
+                    controller: _pageController, // PageController
+                    count: itemModel.imageDownloadUrls.length,
+                    effect: WormEffect(
+                        activeDotColor: Theme.of(context).primaryColor,
+                        dotColor: Theme.of(context).colorScheme.background,
+                        radius: 4,
+                        dotHeight: 8,
+                        dotWidth: 8), // your preferred effect
+                    onDotClicked: (index) {}),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // Widget _userSection(ItemModel2 _itemModel) {
-  //   int phoneCnt = _itemModel.userPhone.length;
-  //   //[서울특별시, 용산구, 원효로71길, 11, (원효로2가)]
-  //   //[서울특별시, 중구, 태평로1가, 31]
-  //   List _address = _itemModel.address.split(' ');
-  //   String _detail = _address[_address.length - 1];
-  //   String _location = '';
-  //
-  //   if (_detail.contains('(') && _detail.contains(')')) {
-  //     _location = _detail.replaceAll('(', '').replaceAll(')', '');
-  //   } else {
-  //     _location = _address[2];
-  //   }
-  //
-  //   return Row(
-  //     children: [
-  //       ExtendedImage.network(
-  //         'https://picsum.photos/50',
-  //         fit: BoxFit.cover,
-  //         width: _size!.width / 10,
-  //         height: _size!.width / 10,
-  //         shape: BoxShape.circle,
-  //       ),
-  //       const SizedBox(width: padding_16),
-  //       SizedBox(
-  //         height: _size!.width / 10,
-  //         child: Column(
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           // crossAxisAlignment: CrossAxisAlignment.auth,
-  //           children: [
-  //             Text(
-  //               _itemModel.userPhone.substring(phoneCnt - 4).toString(),
-  //               style: Theme.of(context).textTheme.bodyText1,
-  //             ),
-  //             Text(
-  //               _location,
-  //               style: Theme.of(context).textTheme.bodyText2,
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //       Expanded(child: Container()),
-  //       Column(
-  //         crossAxisAlignment: CrossAxisAlignment.end,
-  //         children: [
-  //           Row(
-  //             children: [
-  //               SizedBox(
-  //                 width: 42,
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.stretch,
-  //                   children: [
-  //                     const FittedBox(
-  //                       child: Text(
-  //                         '37.3 °C',
-  //                         style: TextStyle(
-  //                             fontWeight: FontWeight.bold,
-  //                             color: Colors.blueAccent),
-  //                       ),
-  //                     ),
-  //                     const SizedBox(height: 6),
-  //                     ClipRRect(
-  //                       borderRadius: BorderRadius.circular(1),
-  //                       child: LinearProgressIndicator(
-  //                         color: Colors.blueAccent,
-  //                         value: 0.365,
-  //                         minHeight: 3,
-  //                         backgroundColor: Colors.grey[200],
-  //                       ),
-  //                     )
-  //                   ],
-  //                 ),
-  //               ),
-  //               const SizedBox(width: 6),
-  //               const ImageIcon(
-  //                 ExtendedAssetImageProvider('assets/imgs/happiness.png'),
-  //                 color: Colors.blue,
-  //               ),
-  //             ],
-  //           ),
-  //           const SizedBox(height: padding_08),
-  //           Text(
-  //             '매너온도',
-  //             style: Theme.of(context)
-  //                 .textTheme
-  //                 .bodyText2!
-  //                 .copyWith(decoration: TextDecoration.underline),
-  //           ),
-  //         ],
-  //       ),
-  //       // Text('aaa'),
-  //     ],
-  //   );
-  // }
+// Widget _userSection(ItemModel2 _itemModel) {
+//   int phoneCnt = _itemModel.userPhone.length;
+//   //[서울특별시, 용산구, 원효로71길, 11, (원효로2가)]
+//   //[서울특별시, 중구, 태평로1가, 31]
+//   List _address = _itemModel.address.split(' ');
+//   String _detail = _address[_address.length - 1];
+//   String _location = '';
+//
+//   if (_detail.contains('(') && _detail.contains(')')) {
+//     _location = _detail.replaceAll('(', '').replaceAll(')', '');
+//   } else {
+//     _location = _address[2];
+//   }
+//
+//   return Row(
+//     children: [
+//       ExtendedImage.network(
+//         'https://picsum.photos/50',
+//         fit: BoxFit.cover,
+//         width: _size!.width / 10,
+//         height: _size!.width / 10,
+//         shape: BoxShape.circle,
+//       ),
+//       const SizedBox(width: padding_16),
+//       SizedBox(
+//         height: _size!.width / 10,
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           // crossAxisAlignment: CrossAxisAlignment.auth,
+//           children: [
+//             Text(
+//               _itemModel.userPhone.substring(phoneCnt - 4).toString(),
+//               style: Theme.of(context).textTheme.bodyText1,
+//             ),
+//             Text(
+//               _location,
+//               style: Theme.of(context).textTheme.bodyText2,
+//             ),
+//           ],
+//         ),
+//       ),
+//       Expanded(child: Container()),
+//       Column(
+//         crossAxisAlignment: CrossAxisAlignment.end,
+//         children: [
+//           Row(
+//             children: [
+//               SizedBox(
+//                 width: 42,
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.stretch,
+//                   children: [
+//                     const FittedBox(
+//                       child: Text(
+//                         '37.3 °C',
+//                         style: TextStyle(
+//                             fontWeight: FontWeight.bold,
+//                             color: Colors.blueAccent),
+//                       ),
+//                     ),
+//                     const SizedBox(height: 6),
+//                     ClipRRect(
+//                       borderRadius: BorderRadius.circular(1),
+//                       child: LinearProgressIndicator(
+//                         color: Colors.blueAccent,
+//                         value: 0.365,
+//                         minHeight: 3,
+//                         backgroundColor: Colors.grey[200],
+//                       ),
+//                     )
+//                   ],
+//                 ),
+//               ),
+//               const SizedBox(width: 6),
+//               const ImageIcon(
+//                 ExtendedAssetImageProvider('assets/imgs/happiness.png'),
+//                 color: Colors.blue,
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: padding_08),
+//           Text(
+//             '매너온도',
+//             style: Theme.of(context)
+//                 .textTheme
+//                 .bodyText2!
+//                 .copyWith(decoration: TextDecoration.underline),
+//           ),
+//         ],
+//       ),
+//       // Text('aaa'),
+//     ],
+//   );
+// }
 }
