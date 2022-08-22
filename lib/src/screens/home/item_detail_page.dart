@@ -3,13 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../constants/common_size.dart';
 import '../../models/item_model.dart';
-import '../../models/user_model.dart';
 import '../../repo/item_service.dart';
 
-// import '../../states/category_controller.dart';
-import '../../states/user_controller.dart';
 import '../../utils/logger.dart';
 
 class ItemDetailPage extends StatefulWidget {
@@ -22,12 +18,14 @@ class ItemDetailPage extends StatefulWidget {
 class _ItemDetailPageState extends State<ItemDetailPage> {
   final PageController _pageController = PageController();
 
-  // final ScrollController _scrollController = ScrollController();
+  // 스크롤이 얼마나 되었는지 알기 위해서 컨트롤러 등록,
+  final ScrollController _scrollController = ScrollController();
 
-  // bool isAppbarCollapsed = false;
+  // isAppbarCollapsed 이미지가 화면에서 사라졌는지 확인,
+  bool isAppbarCollapsed = false;
   Size? _size;
 
-  // num? _statusBarHeight;
+  num? _statusBarHeight;
   late String newItemKey;
 
   // final Widget _textGap = const SizedBox(height: padding_16);
@@ -45,37 +43,41 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   @override
   void initState() {
     newItemKey = Get.arguments['itemKey'];
-    if (Get.arguments['itemKey'][0] == ':') {
-      // String orgItemKey = widget.itemKey;
-      newItemKey = Get.arguments['itemKey'].substring(1);
-    }
+    // if (Get.arguments['itemKey'][0] == ':') {
+    //   // String orgItemKey = widget.itemKey;
+    //   newItemKey = Get.arguments['itemKey'].substring(1);
+    // }
+    logger.d('$_size!.width, $kToolbarHeight, $_statusBarHeight, ${isAppbarCollapsed.toString()}');
 
-    // _scrollController.addListener(() {
-    //   if (_size == null && _statusBarHeight == null) return;
-    //   logger.d(
-    //       '${_scrollController.offset}, ${_size!.width - kToolbarHeight - _statusBarHeight!}, ${isAppbarCollapsed.toString()}');
-    //
-    //   if (isAppbarCollapsed) {
-    //     if (_scrollController.offset <
-    //         _size!.width - kToolbarHeight - _statusBarHeight!) {
-    //       isAppbarCollapsed = false;
-    //       setState(() {});
-    //     }
-    //   } else {
-    //     if (_scrollController.offset >
-    //         _size!.width - kToolbarHeight - _statusBarHeight!) {
-    //       isAppbarCollapsed = true;
-    //       setState(() {});
-    //     }
-    //   }
-    // });
+    // 스크롤이 발생할때 마다 addListener 가 실행됨,
+    _scrollController.addListener(() {
+      if (_size == null && _statusBarHeight == null) return;
+      // debugPrint(
+      //     '${_size!.width}, $kToolbarHeight, $_statusBarHeight, ${_scrollController.offset.toInt()}, ${_size!.width - kToolbarHeight - _statusBarHeight!}, ${isAppbarCollapsed.toString()}');
+
+      if (isAppbarCollapsed) {
+        // 여기는 이미지가 앱바 아래로 보여지기 시작하는 시점,
+        // 앱바 사이즈(kToolbarHeight), 상태바 사이즈(_statusBarHeight)
+        if (_scrollController.offset < _size!.width - kToolbarHeight - _statusBarHeight!) {
+          isAppbarCollapsed = false;
+          setState(() {});
+        }
+      } else {
+        // 여기는 이미지가 앱바에 위로 올라가서 안보이기 시작하는 시점,
+        // 앱바 사이즈(kToolbarHeight), 상태바 사이즈(_statusBarHeight)
+        if (_scrollController.offset > _size!.width - kToolbarHeight - _statusBarHeight!) {
+          isAppbarCollapsed = true;
+          setState(() {});
+        }
+      }
+    });
     super.initState();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    // _scrollController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -124,8 +126,10 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
           return LayoutBuilder(
             builder: (context, constraints) {
               _size = MediaQuery.of(context).size;
-              // _statusBarHeight = MediaQuery.of(context).padding.top;
+              // 상태바 길이 가져오는 공식,
+              _statusBarHeight = MediaQuery.of(context).padding.top;
               return Stack(
+                // fit 은 Stack 에 있는 모든 아이콘들이 화면에 가득차게 하는 옵션,
                 fit: StackFit.expand,
                 children: [
                   // 메인 정보를 표시하는 영역
@@ -191,9 +195,9 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                     // ),
                     // 메인정보를 표시, CustomScrollView 는 listView 유사함
                     // listView 대신에 CustomScrollView 사용하는 이유는
-                    // 화면을 구역으로 나눠서 각 구역마다 슬라이스를 구현할 수 있다,
+                    // slivers 를 이용해서 화면을 구역으로 나눠서 각 구역마다 슬라이스를 구현할 수 있다,
                     body: CustomScrollView(
-                      // controller: _scrollController,
+                      controller: _scrollController,
                       // children 을 대신하는 slivers 있고, slivers 안에는 sliver 형식의 위젯을 넣어줘야 한다
                       slivers: [
                         // 업로드한 사진 정보를 표시하는 영역
@@ -345,47 +349,45 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                       ],
                     ),
                   ),
-                  // // 앱바 영역에 그라데이션 표현 추가
-                  // Positioned(
-                  //   left: 0,
-                  //   right: 0,
-                  //   top: 0,
-                  //   height: kToolbarHeight + _statusBarHeight!,
-                  //   child: Container(
-                  //     height: kToolbarHeight + _statusBarHeight!,
-                  //     decoration: const BoxDecoration(
-                  //       gradient: LinearGradient(
-                  //         begin: Alignment.topCenter,
-                  //         end: Alignment.bottomCenter,
-                  //         colors: [
-                  //           Colors.black45,
-                  //           Colors.black38,
-                  //           Colors.black26,
-                  //           Colors.black12,
-                  //           Colors.transparent,
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  // // 화면 스크롤업 하면 앱바를 힌색으로 변경.
-                  // Positioned(
-                  //   left: 0,
-                  //   right: 0,
-                  //   top: 0,
-                  //   height: kToolbarHeight + _statusBarHeight!,
-                  //   child: Scaffold(
-                  //     backgroundColor: Colors.transparent,
-                  //     appBar: AppBar(
-                  //       shadowColor: Colors.transparent,
-                  //       backgroundColor: isAppbarCollapsed
-                  //           ? Colors.white
-                  //           : Colors.transparent,
-                  //       foregroundColor:
-                  //       isAppbarCollapsed ? Colors.black87 : Colors.white,
-                  //     ),
-                  //   ),
-                  // )
+                  // 앱바 영역에 그라데이션 표현 추가
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    height: kToolbarHeight + _statusBarHeight!,
+                    child: Container(
+                      height: kToolbarHeight + _statusBarHeight!,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black45,
+                            Colors.black38,
+                            Colors.black26,
+                            Colors.black12,
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // 화면 스크롤업 하면 앱바를 힌색으로 변경.
+                  // 이전에 구현한 인디케이터가 appBar 타이틀위치에서 보여주던걸 숨김,
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    height: kToolbarHeight + _statusBarHeight!,
+                    child: Scaffold(
+                      backgroundColor: Colors.transparent,
+                      appBar: AppBar(
+                        shadowColor: Colors.transparent,
+                        backgroundColor: isAppbarCollapsed ? Colors.white : Colors.transparent,
+                        foregroundColor: isAppbarCollapsed ? Colors.black87 : Colors.white,
+                      ),
+                    ),
+                  )
                 ],
               );
             },
@@ -428,42 +430,20 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
         ),
 
         // background 로 이미지를 넣으면 됨, 이미지 표시
-        background: Stack(
-          children: [
-            // 좌/우로 스크롤 가능하게 처리,
-            PageView.builder(
-              controller: _pageController,
-              // 옆페이지로 이동시 포커스를 옆페이지로 이동시켜 로딩을 미리하게 설정함,
-              allowImplicitScrolling: true,
-              itemBuilder: (BuildContext context, int index) {
-                return ExtendedImage.network(
-                  itemModel.imageDownloadUrls[index],
-                  fit: BoxFit.cover,
-                  // 캐싱을 했지만 다시 로딩하는 경우가 있어서 이미지 사이즈를 줄여줌,
-                  scale: 0.1,
-                );
-              },
-              itemCount: itemModel.imageDownloadUrls.length,
-            ),
-            // Positioned(
-            //   bottom: padding_16,
-            //   // 중간으로 위치시키기 위해서 좌/우 0 으로 설정,
-            //   left: 0,
-            //   right: 0,
-            //   child: Center(
-            //     child: SmoothPageIndicator(
-            //         controller: _pageController, // PageController
-            //         count: itemModel.imageDownloadUrls.length,
-            //         effect: WormEffect(
-            //             activeDotColor: Theme.of(context).primaryColor,
-            //             dotColor: Theme.of(context).colorScheme.background,
-            //             radius: 4,
-            //             dotHeight: 8,
-            //             dotWidth: 8), // your preferred effect
-            //         onDotClicked: (index) {}),
-            //   ),
-            // ),
-          ],
+        background: PageView.builder(
+          // 좌/우로 스크롤 가능하게 처리,
+          controller: _pageController,
+          // 옆페이지로 이동시 포커스를 옆페이지로 이동시켜 로딩을 미리하게 설정함,
+          allowImplicitScrolling: true,
+          itemBuilder: (BuildContext context, int index) {
+            return ExtendedImage.network(
+              itemModel.imageDownloadUrls[index],
+              fit: BoxFit.cover,
+              // 캐싱을 했지만 다시 로딩하는 경우가 있어서 이미지 사이즈를 줄여줌,
+              scale: 0.1,
+            );
+          },
+          itemCount: itemModel.imageDownloadUrls.length,
         ),
       ),
     );
