@@ -1,11 +1,14 @@
+import 'package:apple_market3/src/states/category_controller.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../constants/common_size.dart';
 import '../../models/item_model.dart';
 import '../../repo/item_service.dart';
 
+import '../../states/category_controller.dart';
 import '../../utils/logger.dart';
 
 class ItemDetailPage extends StatefulWidget {
@@ -28,17 +31,17 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   num? _statusBarHeight;
   late String newItemKey;
 
-  // final Widget _textGap = const SizedBox(height: padding_16);
+  final Widget _textGap = const SizedBox(height: padding_16);
 
-  // Widget _divider(double _height) {
-  //   return Divider(
-  //     height: _height, //padding_16 * 2 + 1,
-  //     thickness: 2,
-  //     color: Colors.grey[300]!,
-  //     // indent: padding_08,
-  //     // endIndent: padding_08,
-  //   );
-  // }
+  Widget _divider(double _height) {
+    return Divider(
+      height: _height, //padding_16 * 2 + 1,
+      thickness: 2,
+      color: Colors.grey[300]!,
+      // indent: padding_08,
+      // endIndent: padding_08,
+    );
+  }
 
   @override
   void initState() {
@@ -129,70 +132,71 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
               // 상태바 길이 가져오는 공식,
               _statusBarHeight = MediaQuery.of(context).padding.top;
               return Stack(
+                // 스택에서는 하단 위젯부터 화면에서는 front 에 위치,
                 // fit 은 Stack 에 있는 모든 아이콘들이 화면에 가득차게 하는 옵션,
                 fit: StackFit.expand,
                 children: [
                   // 메인 정보를 표시하는 영역
                   Scaffold(
                     // 화면 하단을 네비로 표시함
-                    // bottomNavigationBar: SafeArea(
-                    //   top: false,
-                    //   bottom: true,
-                    //   child: Container(
-                    //     height: 80,
-                    //     decoration: BoxDecoration(
-                    //       border: Border(
-                    //         top: BorderSide(color: Colors.grey[300]!),
-                    //         bottom: BorderSide(color: Colors.grey[300]!),
-                    //       ),
-                    //     ),
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.all(padding_08),
-                    //       child: Row(
-                    //         children: [
-                    //           IconButton(
-                    //             onPressed: () {},
-                    //             icon: const Icon(Icons.favorite_border),
-                    //           ),
-                    //           const VerticalDivider(
-                    //             thickness: 1,
-                    //             width: padding_08 * 2 + 1,
-                    //             indent: padding_08,
-                    //             endIndent: padding_08,
-                    //           ),
-                    //           Column(
-                    //             mainAxisAlignment:
-                    //             MainAxisAlignment.spaceEvenly,
-                    //             // crossAxisAlignment: CrossAxisAlignment.auth,
-                    //             children: [
-                    //               Text(
-                    //                 itemModel.price.toString(),
-                    //                 style:
-                    //                 Theme.of(context).textTheme.bodyText1,
-                    //               ),
-                    //               Text(
-                    //                 itemModel.negotiable ? '가격제안가능' : '가격제안불가',
-                    //                 style: itemModel.negotiable
-                    //                     ? Theme.of(context)
-                    //                     .textTheme
-                    //                     .bodyText2!
-                    //                     .copyWith(color: Colors.blue)
-                    //                     : Theme.of(context).textTheme.bodyText2,
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           Expanded(child: Container()),
-                    //           TextButton(
-                    //             onPressed: () {
-                    //               // _goToChatroom(itemModel, userModel);
-                    //             },
-                    //             child: const Text('채팅으로 거래하기'),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    bottomNavigationBar: SafeArea(
+                      // SafeArea - 전화기의 하단 메뉴바 영역과 앱 영역이 중복되는거 피하기 위해서,
+                      top: false,
+                      bottom: true, // 아래 영역만 피하기 위해서,
+                      child: Container(
+                        // Row/VerticalDivider 의 사이즈를 제한하기 위해서 Container&height 처리함,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: Colors.grey[300]!),
+                            bottom: BorderSide(color: Colors.grey[300]!),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(padding_08),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.favorite_border),
+                              ),
+                              const VerticalDivider(
+                                thickness: 1,
+                                width: padding_08 * 2 + 1,
+                                indent: padding_08,
+                                endIndent: padding_08,
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                // crossAxisAlignment: CrossAxisAlignment.auth,
+                                children: [
+                                  Text(
+                                    itemModel.price.toString(),
+                                    style: Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                  Text(
+                                    itemModel.negotiable ? '가격제안가능' : '가격제안불가',
+                                    style: itemModel.negotiable
+                                        ? Theme.of(context)
+                                            .textTheme
+                                            .bodyText2!
+                                            .copyWith(color: Colors.blue)
+                                        : Theme.of(context).textTheme.bodyText2,
+                                  ),
+                                ],
+                              ),
+                              Expanded(child: Container()),
+                              TextButton(
+                                onPressed: () {
+                                  // _goToChatroom(itemModel, userModel);
+                                },
+                                child: const Text('채팅으로 거래하기'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     // 메인정보를 표시, CustomScrollView 는 listView 유사함
                     // listView 대신에 CustomScrollView 사용하는 이유는
                     // slivers 를 이용해서 화면을 구역으로 나눠서 각 구역마다 슬라이스를 구현할 수 있다,
@@ -203,118 +207,110 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                         // 업로드한 사진 정보를 표시하는 영역
                         _imageAppBar(itemModel),
                         // 상세 텍스트 정보를 표시하는 영역
-                        // SliverPadding(
-                        //   padding: const EdgeInsets.all(padding_16),
-                        //   sliver: SliverList(
-                        //     delegate: SliverChildListDelegate([
-                        //       _userSection(itemModel),
-                        //       _divider(padding_16 * 2 + 1),
-                        //       Text(
-                        //         itemModel.title,
-                        //         style: Theme.of(context).textTheme.headline6,
-                        //       ),
-                        //       _textGap,
-                        //       Row(
-                        //         children: [
-                        //           Text(
-                        //             categoriesMapEngToKor[itemModel.category] ??
-                        //                 '선택',
-                        //             style: Theme.of(context)
-                        //                 .textTheme
-                        //                 .bodyText2!
-                        //                 .copyWith(
-                        //                 decoration:
-                        //                 TextDecoration.underline),
-                        //           ),
-                        //           // Text(
-                        //           //   ' · ${TimeCalculation.getTimeDiff(itemModel.createdDate)}',
-                        //           //   style:
-                        //           //   Theme.of(context).textTheme.bodyText2,
-                        //           // ),
-                        //         ],
-                        //       ),
-                        //       _textGap,
-                        //       Text(
-                        //         itemModel.detail,
-                        //         style: Theme.of(context).textTheme.bodyText1,
-                        //       ),
-                        //       _textGap,
-                        //       Text(
-                        //         '조회 33',
-                        //         style: Theme.of(context).textTheme.caption,
-                        //       ),
-                        //       _textGap,
-                        //       _divider(2),
-                        //       MaterialButton(
-                        //         padding: EdgeInsets.zero,
-                        //         onPressed: () {
-                        //           // 이메일로 처리하고 싶으면 flutter_email_sender 참고할 것
-                        //           // https://pub.dev/packages/flutter_email_sender
-                        //           logger.d('게시글을 신고합니다');
-                        //         },
-                        //         child: const Align(
-                        //           alignment: Alignment.centerLeft,
-                        //           child: Text(
-                        //             '이 게시글 신고하기',
-                        //             // style: Theme.of(context)
-                        //             //     .textTheme
-                        //             //     .button!
-                        //             //     .copyWith(color: Colors.black87),
-                        //           ),
-                        //         ),
-                        //       ),
-                        //       _divider(2),
-                        //       // 판매자의 다른 상품 보기
-                        //     ]),
-                        //   ),
+                        SliverPadding(
+                          padding: const EdgeInsets.all(padding_16),
+                          sliver: SliverList(
+                            // SliverToBoxAdapter 로 각각 처리할수도 있고,
+                            // SliverList 를 이용하여 리스트 형식으로도 처리 가능,
+                            delegate: SliverChildListDelegate([
+                              _userSection(itemModel),
+                              _divider(padding_16 * 2 + 1),
+                              Text(
+                                itemModel.title,
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                              _textGap,
+                              Row(
+                                children: [
+                                  Text(
+                                    categoriesMapEngToKor[itemModel.category] ?? '선택',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(decoration: TextDecoration.underline),
+                                  ),
+                                  Text(
+                                    // ' · ${TimeCalculation.getTimeDiff(itemModel.createdDate)}',
+                                    ' · 2분전',
+                                    style: Theme.of(context).textTheme.bodyText2,
+                                  ),
+                                ],
+                              ),
+                              _textGap,
+                              Text(
+                                itemModel.detail,
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
+                              _textGap,
+                              Text(
+                                '조회 33',
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                              _textGap,
+                              _divider(2),
+                              MaterialButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  // 이메일로 처리하고 싶으면 flutter_email_sender 참고할 것
+                                  // https://pub.dev/packages/flutter_email_sender
+                                  logger.d('게시글을 신고합니다');
+                                },
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    '이 게시글 신고하기',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .button!
+                                        .copyWith(color: Colors.black87),
+                                  ),
+                                ),
+                              ),
+                              _divider(2),
+                              // 판매자의 다른 상품 보기
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     Text(
+                              //       '판매자의 다른 상품',
+                              //       style: Theme.of(context).textTheme.bodyText1,
+                              //     ),
+                              //     SizedBox(
+                              //       width: _size!.width / 4,
+                              //       child: MaterialButton(
+                              //         // padding: EdgeInsets.zero,
+                              //         onPressed: () {},
+                              //         child: Align(
+                              //           alignment: Alignment.centerRight,
+                              //           child: Text(
+                              //             '더보기',
+                              //             style: Theme.of(context)
+                              //                 .textTheme
+                              //                 .button!
+                              //                 .copyWith(color: Colors.grey),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                            ]),
+                          ),
+                        ),
+                        // SliverGrid.count(
+                        //   crossAxisCount: 2,
+                        //   children: List.generate(
+                        //       10, (index) => Container(color: Colors.accents[index])),
                         // ),
-                        // 일반위젯을 sliver 안에 넣으러면 SliverToBoxAdapter 로 wrapping 해야 함,
-                        SliverToBoxAdapter(
-                          child: Container(
-                            // 스크롤 테스트를 위해서 높이를 길게 적용함,
-                            height: _size!.height,
-                            color: Colors.cyan,
-                            child: Center(child: Text(newItemKey)),
-                          ),
-                          // child: Padding(
-                          //   padding: const EdgeInsets.symmetric(
-                          //       horizontal: padding_16),
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //     children: [
-                          //       Text(
-                          //         '판매자의 다른 상품',
-                          //         style: Theme.of(context).textTheme.bodyText1,
-                          //       ),
-                          //       SizedBox(
-                          //         width: _size!.width / 4,
-                          //         child: MaterialButton(
-                          //           // padding: EdgeInsets.zero,
-                          //           onPressed: () {},
-                          //           child: Align(
-                          //             alignment: Alignment.centerRight,
-                          //             child: Text(
-                          //               '더보기',
-                          //               style: Theme.of(context)
-                          //                   .textTheme
-                          //                   .button!
-                          //                   .copyWith(color: Colors.grey),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                        ),
-                        SliverToBoxAdapter(
-                          child: Container(
-                            // 스크롤 테스트를 위해서 높이를 길게 적용함,
-                            height: _size!.height,
-                            color: Colors.redAccent,
-                            child: Center(child: Text(newItemKey)),
-                          ),
-                        ),
+                        // // 일반위젯을 sliver 안에 넣으러면 SliverToBoxAdapter 로 wrapping 해야 함,
+                        // SliverToBoxAdapter(
+                        //   child: Container(
+                        //       // 스크롤 테스트를 위해서 높이를 길게 적용함,
+                        //       height: _size!.height,
+                        //       color: Colors.cyan,
+                        //       child: Center(child: Text(newItemKey))),
+                        // ),
+                        // // 일반위젯을 sliver 안에 넣으러면 SliverToBoxAdapter 로 wrapping 해야 함,
                         // SliverToBoxAdapter(
                         //   child: FutureBuilder<List<ItemModel2>>(
                         //     future: ItemService().getUserItems(
@@ -417,7 +413,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
               // PageController
               count: itemModel.imageDownloadUrls.length,
               effect: const WormEffect(
-                activeDotColor: Colors.black,
+                activeDotColor: Colors.white,
                 //Theme.of(context).primaryColor,
                 dotColor: Colors.black45,
                 //Theme.of(context).colorScheme.background,
@@ -449,98 +445,98 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     );
   }
 
-// Widget _userSection(ItemModel2 _itemModel) {
-//   int phoneCnt = _itemModel.userPhone.length;
-//   //[서울특별시, 용산구, 원효로71길, 11, (원효로2가)]
-//   //[서울특별시, 중구, 태평로1가, 31]
-//   List _address = _itemModel.address.split(' ');
-//   String _detail = _address[_address.length - 1];
-//   String _location = '';
-//
-//   if (_detail.contains('(') && _detail.contains(')')) {
-//     _location = _detail.replaceAll('(', '').replaceAll(')', '');
-//   } else {
-//     _location = _address[2];
-//   }
-//
-//   return Row(
-//     children: [
-//       ExtendedImage.network(
-//         'https://picsum.photos/50',
-//         fit: BoxFit.cover,
-//         width: _size!.width / 10,
-//         height: _size!.width / 10,
-//         shape: BoxShape.circle,
-//       ),
-//       const SizedBox(width: padding_16),
-//       SizedBox(
-//         height: _size!.width / 10,
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           // crossAxisAlignment: CrossAxisAlignment.auth,
-//           children: [
-//             Text(
-//               _itemModel.userPhone.substring(phoneCnt - 4).toString(),
-//               style: Theme.of(context).textTheme.bodyText1,
-//             ),
-//             Text(
-//               _location,
-//               style: Theme.of(context).textTheme.bodyText2,
-//             ),
-//           ],
-//         ),
-//       ),
-//       Expanded(child: Container()),
-//       Column(
-//         crossAxisAlignment: CrossAxisAlignment.end,
-//         children: [
-//           Row(
-//             children: [
-//               SizedBox(
-//                 width: 42,
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.stretch,
-//                   children: [
-//                     const FittedBox(
-//                       child: Text(
-//                         '37.3 °C',
-//                         style: TextStyle(
-//                             fontWeight: FontWeight.bold,
-//                             color: Colors.blueAccent),
-//                       ),
-//                     ),
-//                     const SizedBox(height: 6),
-//                     ClipRRect(
-//                       borderRadius: BorderRadius.circular(1),
-//                       child: LinearProgressIndicator(
-//                         color: Colors.blueAccent,
-//                         value: 0.365,
-//                         minHeight: 3,
-//                         backgroundColor: Colors.grey[200],
-//                       ),
-//                     )
-//                   ],
-//                 ),
-//               ),
-//               const SizedBox(width: 6),
-//               const ImageIcon(
-//                 ExtendedAssetImageProvider('assets/imgs/happiness.png'),
-//                 color: Colors.blue,
-//               ),
-//             ],
-//           ),
-//           const SizedBox(height: padding_08),
-//           Text(
-//             '매너온도',
-//             style: Theme.of(context)
-//                 .textTheme
-//                 .bodyText2!
-//                 .copyWith(decoration: TextDecoration.underline),
-//           ),
-//         ],
-//       ),
-//       // Text('aaa'),
-//     ],
-//   );
-// }
+  Widget _userSection(ItemModel2 _itemModel) {
+    int phoneCnt = _itemModel.userPhone.length;
+    //[서울특별시, 용산구, xxx길, 11, (xxx2가)]
+    //[서울특별시, 중구, 태평로x가, xx]
+    List _address = _itemModel.address.split(' ');
+    String _detail = _address[_address.length - 1];
+    String _location = '';
+
+    if (_detail.contains('(') && _detail.contains(')')) {
+      _location = _detail.replaceAll('(', '').replaceAll(')', '');
+    } else {
+      _location = _address[2];
+    }
+
+    return Row(
+      children: [
+        ExtendedImage.network(
+          'https://picsum.photos/50',
+          fit: BoxFit.cover,
+          width: _size!.width / 10,
+          height: _size!.width / 10,
+          shape: BoxShape.circle,
+        ),
+        const SizedBox(width: padding_16),
+        SizedBox(
+          height: _size!.width / 10,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // crossAxisAlignment: CrossAxisAlignment.auth,
+            children: [
+              Text(
+                _itemModel.userPhone.substring(phoneCnt - 4).toString(),
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              Text(
+                _location,
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+            ],
+          ),
+        ),
+        // 매너온도를 오른쪽으로 보내기 위해서 중간에 빈박스를 Expanded 로 처리,
+        Expanded(child: Container()),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  // 온도와 LinearProgressIndicator 를 가로 길이를 같게 하기위해서,
+                  width: 42,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const FittedBox(
+                        child: Text(
+                          '37.3 °C',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(1),
+                        child: LinearProgressIndicator(
+                          color: Colors.blueAccent,
+                          value: 0.365,
+                          minHeight: 3,
+                          backgroundColor: Colors.grey[200],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 6),
+                const ImageIcon(
+                  ExtendedAssetImageProvider('assets/imgs/happiness.png'),
+                  color: Colors.blue,
+                ),
+              ],
+            ),
+            const SizedBox(height: padding_08),
+            Text(
+              '매너온도',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText2!
+                  .copyWith(decoration: TextDecoration.underline),
+            ),
+          ],
+        ),
+        // Text('aaa'),
+      ],
+    );
+  }
 }

@@ -27,7 +27,7 @@ const Map<String, String> categoriesMapEngToKor = {
   'furniture': '가구',
   'electronics': '전자기기',
   'kids': '유아동',
-  'sports': '스포츠',
+  'sports': '스포츠/레저',
   'woman': '여성',
   'man': '남성',
   'makeup': '메이크업',
