@@ -50,6 +50,7 @@ class ItemService {
     // fromSnapshot 을 대체하려면, 2줄 코딩으로 변경필요함,
     ItemModel2 itemModel = ItemModel2.fromJson(documentSnapshot.data()!);
     itemModel.reference = documentSnapshot.reference;
+    itemModel.itemKey = documentSnapshot.id;
 
     return itemModel;
   }
@@ -72,33 +73,33 @@ class ItemService {
       // ItemModel2 itemModel = ItemModel2.fromQuerySnapshot(snapshot);
       ItemModel2 itemModel = ItemModel2.fromJson(snapshot.data());
       itemModel.reference = snapshot.reference;
+      itemModel.itemKey = snapshot.id;
       items.add(itemModel);
     }
 
     return items;
   }
 
-// Future<List<ItemModel2>> getUserItems(String userKey,
-//     {String? itemKey}) async {
-//   CollectionReference<Map<String, dynamic>> collectionReference =
-//   FirebaseFirestore.instance
-//       .collection(COL_USERS)
-//       .doc(userKey)
-//       .collection(COL_USER_ITEMS);
-//   QuerySnapshot<Map<String, dynamic>> snapshots =
-//   await collectionReference.get();
-//   List<ItemModel2> items = [];
-//
-//   for (var snapshot in snapshots.docs) {
-//     ItemModel2 itemModel = ItemModel2.fromQuerySnapshot(snapshot);
-//     if (itemKey == null || itemModel.itemKey != itemKey) {
-//       items.add(itemModel);
-//     }
-//   }
-//
-//   // logger.d(items[0].toJson());
-//   return items;
-// }
+  Future<List<ItemModel2>> getUserItems({required String userKey, String? itemKey}) async {
+    CollectionReference<Map<String, dynamic>> collectionReference =
+        FirebaseFirestore.instance.collection(COL_USERS).doc(userKey).collection(COL_USER_ITEMS);
+    QuerySnapshot<Map<String, dynamic>> snapshots = await collectionReference.get();
+    List<ItemModel2> items = [];
+
+    for (var snapshot in snapshots.docs) {
+      // ItemModel2 itemModel = ItemModel2.fromQuerySnapshot(snapshot);
+      ItemModel2 itemModel = ItemModel2.fromJson(snapshot.data());
+      itemModel.reference = snapshot.reference;
+      itemModel.itemKey = snapshot.id;
+
+      if (itemKey == null || itemModel.itemKey != itemKey) {
+        items.add(itemModel);
+      }
+    }
+
+    // logger.d(items[0].toJson());
+    return items;
+  }
 
 // Future<List<ItemModel2>> getNearByItems(String userKey, LatLng latLng) async {
 //   final geo = Geoflutterfire();

@@ -1,3 +1,4 @@
+import 'package:apple_market3/src/screens/home/similar_item.dart';
 import 'package:apple_market3/src/states/category_controller.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +7,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../constants/common_size.dart';
 import '../../models/item_model.dart';
+import '../../models/user_model.dart';
 import '../../repo/item_service.dart';
 
 import '../../states/category_controller.dart';
+import '../../states/user_controller.dart';
 import '../../utils/logger.dart';
+import '../../utils/time_calculation.dart';
 
 class ItemDetailPage extends StatefulWidget {
   const ItemDetailPage({Key? key}) : super(key: key);
@@ -124,7 +128,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
           ItemModel2 itemModel = snapshot.data!;
           // provider 입포트하고 고객 데이터 가져오기
           // UserModel2 userModel = context.read<UserNotifier>().userModel!;
-          // UserModel1 userModel = UserController.to.userModel.value!;
+          UserModel1 userModel = UserController.to.userModel.value!;
 
           return LayoutBuilder(
             builder: (context, constraints) {
@@ -213,7 +217,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                             // SliverToBoxAdapter 로 각각 처리할수도 있고,
                             // SliverList 를 이용하여 리스트 형식으로도 처리 가능,
                             delegate: SliverChildListDelegate([
-                              _userSection(itemModel),
+                              _userSection(userModel),
                               _divider(padding_16 * 2 + 1),
                               Text(
                                 itemModel.title,
@@ -230,8 +234,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                         .copyWith(decoration: TextDecoration.underline),
                                   ),
                                   Text(
-                                    // ' · ${TimeCalculation.getTimeDiff(itemModel.createdDate)}',
-                                    ' · 2분전',
+                                    ' · ${TimeCalculation.getTimeDiff(itemModel.createdDate)}',
                                     style: Theme.of(context).textTheme.bodyText2,
                                   ),
                                 ],
@@ -267,40 +270,23 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                                 ),
                               ),
                               _divider(2),
-                              // 판매자의 다른 상품 보기
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              //   children: [
-                              //     Text(
-                              //       '판매자의 다른 상품',
-                              //       style: Theme.of(context).textTheme.bodyText1,
-                              //     ),
-                              //     SizedBox(
-                              //       width: _size!.width / 4,
-                              //       child: MaterialButton(
-                              //         // padding: EdgeInsets.zero,
-                              //         onPressed: () {},
-                              //         child: Align(
-                              //           alignment: Alignment.centerRight,
-                              //           child: Text(
-                              //             '더보기',
-                              //             style: Theme.of(context)
-                              //                 .textTheme
-                              //                 .button!
-                              //                 .copyWith(color: Colors.grey),
-                              //           ),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
                             ]),
                           ),
                         ),
-                        // SliverGrid.count(
-                        //   crossAxisCount: 2,
-                        //   children: List.generate(
-                        //       10, (index) => Container(color: Colors.accents[index])),
+                        // // SliverGrid.count 사용하는 방법,
+                        // SliverPadding(
+                        //   padding: const EdgeInsets.only(
+                        //       left: padding_16, right: padding_16, bottom: padding_16),
+                        //   sliver: SliverGrid.count(
+                        //     crossAxisCount: 2,
+                        //     mainAxisSpacing: padding_08,
+                        //     crossAxisSpacing: padding_16,
+                        //     childAspectRatio: 7 / 8,
+                        //     children: List.generate(
+                        //       10,
+                        //       (index) => SimilarItem(itemModel),
+                        //     ),
+                        //   ),
                         // ),
                         // // 일반위젯을 sliver 안에 넣으러면 SliverToBoxAdapter 로 wrapping 해야 함,
                         // SliverToBoxAdapter(
@@ -310,38 +296,71 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                         //       color: Colors.cyan,
                         //       child: Center(child: Text(newItemKey))),
                         // ),
-                        // // 일반위젯을 sliver 안에 넣으러면 SliverToBoxAdapter 로 wrapping 해야 함,
-                        // SliverToBoxAdapter(
-                        //   child: FutureBuilder<List<ItemModel2>>(
-                        //     future: ItemService().getUserItems(
-                        //         itemModel.userKey,
-                        //         itemKey: itemModel.itemKey),
-                        //     builder: (context, snapshot) {
-                        //       if (snapshot.hasData) {
-                        //         return Padding(
-                        //           padding: const EdgeInsets.all(padding_08),
-                        //           child: GridView.count(
-                        //             padding: const EdgeInsets.symmetric(
-                        //                 horizontal: padding_08),
-                        //             //EdgeInsets.zero,
-                        //             physics:
-                        //             const NeverScrollableScrollPhysics(),
-                        //             shrinkWrap: true,
-                        //             crossAxisCount: 2,
-                        //             mainAxisSpacing: padding_08,
-                        //             crossAxisSpacing: padding_08,
-                        //             childAspectRatio: 6 / 7,
-                        //             children: List.generate(
-                        //                 snapshot.data!.length,
-                        //                     (index) =>
-                        //                     SimilarItem(snapshot.data![index])),
-                        //           ),
-                        //         );
-                        //       }
-                        //       return Container();
-                        //     },
-                        //   ),
-                        // ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: padding_16),
+                            // 판매자의 다른 상품 보기
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '판매자의 다른 상품',
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                                SizedBox(
+                                  width: _size!.width / 4,
+                                  child: MaterialButton(
+                                    // padding: EdgeInsets.zero,
+                                    onPressed: () {},
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        '더보기',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .button!
+                                            .copyWith(color: Colors.grey),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // 일반위젯을 sliver 안에 넣으러면 SliverToBoxAdapter 로 wrapping 해야 함,
+                        SliverToBoxAdapter(
+                          child: FutureBuilder<List<ItemModel2>>(
+                            future: ItemService().getUserItems(
+                              userKey: itemModel.userKey,
+                              itemKey: itemModel.itemKey,
+                            ),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(padding_08),
+                                  child: GridView.count(
+                                    padding: const EdgeInsets.symmetric(horizontal: padding_08),
+                                    //EdgeInsets.zero,
+                                    // GridView 자체의 스크롤을 off 시키는 옵션,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    // 기본은 false 인데, false 면 전체화면을 차지하려하여 에러발생,
+                                    // ture 면, 가져온 정보를 기초로 화면을 차지함,
+                                    shrinkWrap: true,
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: padding_08,
+                                    crossAxisSpacing: padding_16,
+                                    childAspectRatio: 6 / 7,
+                                    children: List.generate(snapshot.data!.length,
+                                        (index) => SimilarItem(snapshot.data![index])),
+                                  ),
+                                );
+                              }
+                              return Container();
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -445,11 +464,11 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     );
   }
 
-  Widget _userSection(ItemModel2 _itemModel) {
-    int phoneCnt = _itemModel.userPhone.length;
+  Widget _userSection(UserModel1 _userModel) {
+    int phoneCnt = _userModel.phoneNumber.length;
     //[서울특별시, 용산구, xxx길, 11, (xxx2가)]
     //[서울특별시, 중구, 태평로x가, xx]
-    List _address = _itemModel.address.split(' ');
+    List _address = _userModel.address.split(' ');
     String _detail = _address[_address.length - 1];
     String _location = '';
 
@@ -476,7 +495,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             // crossAxisAlignment: CrossAxisAlignment.auth,
             children: [
               Text(
-                _itemModel.userPhone.substring(phoneCnt - 4).toString(),
+                _userModel.phoneNumber.substring(phoneCnt - 4).toString(),
                 style: Theme.of(context).textTheme.bodyText1,
               ),
               Text(

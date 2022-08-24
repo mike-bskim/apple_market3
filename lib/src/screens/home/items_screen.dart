@@ -9,6 +9,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../constants/common_size.dart';
 import '../../constants/data_keys.dart';
 import '../../models/item_model.dart';
+import '../../utils/time_calculation.dart';
 
 class ItemsScreen extends StatefulWidget {
   // final String userKey;
@@ -93,7 +94,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     children: <Widget>[
                       Text(_item.title, style: Theme.of(context).textTheme.subtitle1),
                       Text(
-                        '50일전',
+                        TimeCalculation.getTimeDiff(_item.createdDate),
+                        // '50일전',
                         style: Theme.of(context).textTheme.subtitle2,
                       ),
                       Text(_item.price.toString() + '원'),

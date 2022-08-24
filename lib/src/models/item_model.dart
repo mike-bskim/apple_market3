@@ -75,9 +75,9 @@ class ItemModel2 {
         title: json["title"] ?? '',
         category: json["category"] ?? 'none',
         price: json["price"] ?? 0,
-        negotiable: json["negotiable"],
-        detail: json["detail"],
-        address: json["address"],
+        negotiable: json["negotiable"] ?? false,
+        detail: json["detail"] ?? '',
+        address: json["address"] ?? '',
         geoFirePoint: json[DOC_GEOFIREPOINT] == null
             ? GeoFirePoint(0, 0)
             : GeoFirePoint((json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).latitude,
