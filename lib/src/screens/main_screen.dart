@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../constants/data_keys.dart';
 import '../widgets/expandable_fab.dart';
 import 'home/items_screen.dart';
+import 'near/map_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -77,6 +78,7 @@ class _MainScreenState extends State<MainScreen> {
         index: _bottomSelectedIndex,
         children: <Widget>[
           const ItemsScreen(),
+          const MapScreen(),
           Container(color: Colors.accents[1]),
           Container(color: Colors.accents[3]),
           Container(color: Colors.accents[5]),

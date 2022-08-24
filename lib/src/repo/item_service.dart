@@ -116,7 +116,10 @@ class ItemService {
 //
 //   List<ItemModel2> items = [];
 //   for (var snapshot in snapshots) {
-//     ItemModel2 itemModel = ItemModel2.fromSnapshot(snapshot);
+//     // ItemModel2 itemModel = ItemModel2.fromSnapshot(snapshot);
+//     ItemModel2 itemModel = ItemModel2.fromJson(snapshot.data()!);
+//     itemModel.itemKey = snapshot.id;
+//     itemModel.reference = snapshot.reference;
 //     //todo: remove my own item
 //     // print(
 //     //     'myUserKey[${userKey}], itemUserKey[${itemModel.userKey}][${itemModel.geoFirePoint.latitude}][${itemModel.geoFirePoint.longitude}]');

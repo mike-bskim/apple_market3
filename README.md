@@ -11,6 +11,8 @@ A new Flutter project.
 (2022-08-20) simple solution to indicator position
 (2022-08-22) detail body layout
 (2022-08-23) fix price not appearing bug with regular expression
+(2022-08-24) zoom in:out the map
+
 
 유저위치, 전화번호, 주소, 프로파일 이미지,
 location(lat, long) -> geofire  이게 있어야 주위 데이터를 찾기 쉬움
@@ -26,6 +28,8 @@ sentry flutter - 앱 오류발생시, 에러 로그를 sentry 에서 확인 가�
   pick images form gallery
   set up firebase storage
   upload image on firebase storage - 컴파일 오류 참고할것, cocoapod 도 업글 필요.
+
+
 
 ## Getting Started
 
