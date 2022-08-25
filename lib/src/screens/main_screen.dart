@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../constants/data_keys.dart';
+import '../states/user_controller.dart';
 import '../widgets/expandable_fab.dart';
 import 'home/items_screen.dart';
 import 'near/map_screen.dart';
@@ -53,7 +54,13 @@ class _MainScreenState extends State<MainScreen> {
       ),
       appBar: AppBar(
         // centerTitle: true,
-        title: Text('밀라노', style: Theme.of(context).appBarTheme.titleTextStyle),
+        title: Obx(
+          () => Text(
+              (UserController.to.userModel.value == null)
+                  ? ''
+                  : UserController.to.userModel.value!.phoneNumber,
+              style: Theme.of(context).appBarTheme.titleTextStyle),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -78,8 +85,9 @@ class _MainScreenState extends State<MainScreen> {
         index: _bottomSelectedIndex,
         children: <Widget>[
           const ItemsScreen(),
-          const MapScreen(),
-          Container(color: Colors.accents[1]),
+          (UserController.to.userModel.value == null)
+              ? Container()
+              : MapScreen(UserController.to.userModel.value!),
           Container(color: Colors.accents[3]),
           Container(color: Colors.accents[5]),
           Container(color: Colors.accents[7]),

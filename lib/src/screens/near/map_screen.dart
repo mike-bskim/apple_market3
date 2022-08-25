@@ -1,11 +1,8 @@
+import 'package:apple_market3/src/models/user_model.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:latlng/latlng.dart';
 import 'package:map/map.dart';
-
-// import '../../models/item_model.dart';
-// import '../../models/user_model.dart';
-// import '../../repo/item_service.dart';
 
 /*
 toLatLng(Offset position) → LatLng
@@ -16,18 +13,16 @@ Converts LatLng coordinates to XY Offset.
 */
 
 class MapScreen extends StatefulWidget {
-  // final UserModel1 _userModel;
+  final UserModel1 _userModel;
 
-  const MapScreen({Key? key}) : super(key: key);
+  const MapScreen(this._userModel, {Key? key}) : super(key: key);
 
   @override
   _MapScreenState createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
-  final _mapController = MapController(
-    location: const LatLng(37.53774689, 126.9643189),
-  );
+  late MapController _mapController;
 
   Offset? _dragStart;
   double _scaleData = 1.0;
@@ -63,27 +58,81 @@ class _MapScreenState extends State<MapScreen> {
     // debugPrint('_scaleUpdate ${_mapController.center.latitude}/${_mapController.center.longitude}');
   }
 
+  // 마커 위치/색상 설정, x/y 자표로 입력
+  Widget _buildMarkerWidget(Offset offset, {Color color = Colors.red}) {
+    return Positioned(
+      left: offset.dx,
+      top: offset.dy,
+      width: 24,
+      height: 24,
+      child: Icon(
+        Icons.location_on,
+        color: color,
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    // ------------------- 테스트 데이터 자동 입력 코드 -------------------
+    // generateData(widget._userModel.userKey, widget._userModel.geoFirePoint);
+
+    // 맵컨트롤러의 초기 좌표를 설정
+    _mapController = MapController(
+      location: LatLng(
+        widget._userModel.geoFirePoint.latitude,
+        widget._userModel.geoFirePoint.longitude,
+      ),
+    );
+    super.initState();
+  }
+
   // 버전이 업데이트 되며서 변경된 위젯명, Map -> TileLayer, MapLayoutBuilder -> MapLayout
   @override
   Widget build(BuildContext context) {
+    debugPrint("************************* >>> build from MapScreen");
     return MapLayout(
       builder: (context, transformer) {
-        return GestureDetector(
-          onScaleStart: _scaleStart,
-          onScaleUpdate: (details) => _scaleUpdate(details, transformer),
-          child: TileLayer(
-            // Map TileLayer
-            builder: (context, x, y, z) {
-              //Google Maps
-              final url =
-                  'https://www.google.com/maps/vt/pb=!1m4!1m3!1i$z!2i$x!3i$y!2m3!1e0!2sm!3i420120488!3m7!2sen!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i4111425';
+        // 위도/경도 정보를 화면상의 위치(x,y 좌표)로 변경, fromLatLngToXYCoords -> toOffset
+        final Offset myLocationOnMap = transformer.toOffset(LatLng(
+          widget._userModel.geoFirePoint.latitude,
+          widget._userModel.geoFirePoint.longitude,
+        ));
+        debugPrint('user Location [${widget._userModel.geoFirePoint.latitude}, ${widget._userModel.geoFirePoint.longitude}]');
 
-              return ExtendedImage.network(
-                url,
-                fit: BoxFit.cover,
-              );
-            },
-          ),
+        final myLocationWidget = _buildMarkerWidget(myLocationOnMap);//, color: Colors.black87);
+
+        Size _size = MediaQuery.of(context).size;
+        final middleOnScreen = Offset(_size.width / 2, _size.height / 2);
+        // toLatLng(Offset position) → LatLng
+        // Converts XY coordinates to LatLng.
+        // fromXYCoordsToLatLng -> toLatLng
+        // 화면의 중간점(x,y 좌표)를 위도/경도 로 변환,
+        final latLngOnMap = transformer.toLatLng(middleOnScreen);
+        debugPrint(
+            'Screen center : [${latLngOnMap.latitude.toString()}] [${latLngOnMap.longitude.toString()}]');
+
+        return Stack(
+          children: [
+            GestureDetector(
+              onScaleStart: _scaleStart,
+              onScaleUpdate: (details) => _scaleUpdate(details, transformer),
+              child: TileLayer(
+                // Map TileLayer
+                builder: (context, x, y, z) {
+                  //Google Maps
+                  final url =
+                      'https://www.google.com/maps/vt/pb=!1m4!1m3!1i$z!2i$x!3i$y!2m3!1e0!2sm!3i420120488!3m7!2sen!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i4111425';
+
+                  return ExtendedImage.network(
+                    url,
+                    fit: BoxFit.cover,
+                  );
+                },
+              ),
+            ),
+            myLocationWidget,
+          ],
         );
       },
       controller: _mapController,
@@ -231,16 +280,16 @@ class _MapScreenState extends State<MapScreen> {
 
 // ------------------- 테스트 데이터 자동 입력 코드 -------------------
 
-//
+
 // Future<List<String>> generateData(
 //     String userKey, GeoFirePoint geoFirePoint) async {
 //   List<String> itemKeys = [];
 //
 //   DateTime now = DateTime.now().toUtc();
-//   const numOfItem = 20;
+//   const numOfItem = 15;
 //   await FirebaseFirestore.instance.runTransaction((Transaction tx) async {
 //     for (int i = 0; i < numOfItem; i++) {
-//       final String itemKey = ItemModel.generateItemKey(userKey);
+//       final String itemKey = ItemModel2.generateItemKey(userKey);
 //       logger.d('RandomeData - $itemKey');
 //       itemKeys.add(itemKey);
 //       final DocumentReference postRef =
@@ -259,18 +308,18 @@ class _MapScreenState extends State<MapScreen> {
 //           geoPoint.latitude + (0.001 * (rng.nextInt(100) - 50)),
 //           geoPoint.longitude + (0.001 * (rng.nextInt(100) - 50)));
 //
-//       ItemModel item = ItemModel(
+//       ItemModel2 item = ItemModel2(
 //         userKey: userKey,
 //         itemKey: itemKey,
 //         userPhone: widget._userModel.phoneNumber, //'+821040155592',
 //         imageDownloadUrls: ['https://picsum.photos/200'],
-//         title: 'testing + $i',
+//         title: 'second + ${i+1}',
 //         category: categoriesMapEngToKor.keys
 //             .elementAt(i % categoriesMapEngToKor.keys.length),
 //         price: 100 * i,
 //         negotiable: i % 2 == 0,
-//         detail: 'testing detail + $i',
-//         address: 'testing address + $i',
+//         detail: 'second detail + ${i+1}',
+//         address: 'second address + ${i+1}',
 //         geoFirePoint: newGeoData,
 //         createdDate: now.subtract(Duration(days: i)),
 //       );
@@ -337,36 +386,3 @@ class _MapScreenState extends State<MapScreen> {
 // ------------------- 테스트 데이터 자동 입력 코드 -------------------
 
 }
-
-/*
-Methods
-
-drag(double dx, double dy) → void
-Drags the map by dx, dy pixels.
-
-getViewport() → Rect
-Gets the current viewport in pixels.
-
-noSuchMethod(Invocation invocation) → dynamic
-Invoked when a non-existent method or property is accessed.
-inherited
-
-setZoomInPlace(double zoom, Offset position) → void
-In-place zoom.
-
-toLatLng(Offset position) → LatLng
-Converts XY coordinates to LatLng.
-
-toLatLngMany(Iterable<Offset> positions) → Iterable<LatLng>
-Converts many XY coordinates to LatLng.
-
-toOffset(LatLng location) → Offset
-Converts LatLng coordinates to XY Offset.
-
-toOffsetMany(Iterable<LatLng> locations) → Iterable<Offset>
-Converts many LatLng coordinates to XY Offset.
-
-toString() → String
-A string representation of this object.
-inherited
- */

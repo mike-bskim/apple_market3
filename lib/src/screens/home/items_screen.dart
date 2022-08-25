@@ -22,6 +22,7 @@ class ItemsScreen extends StatefulWidget {
 class _ItemsScreenState extends State<ItemsScreen> {
   @override
   Widget build(BuildContext context) {
+    debugPrint("************************* >>> build from ItemsScreen");
     // 사진 사이즈를 화면 비율에 맞춰서 비례적으로 주기 위해서 LayoutBuilder 사용함,
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -38,7 +39,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
               return AnimatedSwitcher(
                 duration: const Duration(seconds: 1),
                 // child: (snapshot.connectionState == ConnectionState.done)
-                child: (snapshot.hasData && snapshot.data!.isNotEmpty)
+                child: (snapshot.hasData) //  && snapshot.data!.isNotEmpty
                     ? _listView(imgSize, snapshot.data!)
                     : _shimmerListView(imgSize),
               );
