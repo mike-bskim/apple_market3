@@ -56,7 +56,7 @@ class ItemService {
   }
 
   Future<List<ItemModel2>> getItems(String userKey) async {
-    logger.d('userKey[' + userKey.toString() + ']');
+    logger.d('getItems/userKey[' + userKey.toString() + ']');
     CollectionReference<Map<String, dynamic>> collectionReference =
         FirebaseFirestore.instance.collection(COL_ITEMS);
     // collection.get() is Future, collection.snapshots() is Stream

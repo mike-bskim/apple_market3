@@ -43,7 +43,7 @@ class UserController extends GetxController {
       _user.value = user;
       Get.offAllNamed(ROUTE_MAIN);
       await _setNewUser(user);
-      logger.d('(_setNewUser/listen) user status - $user');
+      logger.d('(_setNewUser/listen) user status - $_user.value');
     });
   }
 

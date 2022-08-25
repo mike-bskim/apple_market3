@@ -89,7 +89,7 @@ class _InputScreenState extends State<InputScreen> {
 
     // uploading raw data and return the Urls,
     List<String> downloadUrls = await ImageStorage.uploadImage(images, itemKey);
-    logger.d('upload finished(${downloadUrls.length}) : $downloadUrls');
+    // logger.d('upload finished(${downloadUrls.length}) : $downloadUrls');
 
     ItemModel2 itemModel = ItemModel2(
       itemKey: itemKey,

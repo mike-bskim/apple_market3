@@ -12,6 +12,7 @@ A new Flutter project.
 (2022-08-22) detail body layout
 (2022-08-23) fix price not appearing bug with regular expression
 (2022-08-24) zoom in:out the map
+(2022-08-25) generate items for geo query test
 
 
 유저위치, 전화번호, 주소, 프로파일 이미지,
