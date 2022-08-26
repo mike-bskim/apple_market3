@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:latlng/latlng.dart';
 
 import '../constants/data_keys.dart';
 import '../models/item_model.dart';
@@ -101,33 +103,36 @@ class ItemService {
     return items;
   }
 
-// Future<List<ItemModel2>> getNearByItems(String userKey, LatLng latLng) async {
-//   final geo = Geoflutterfire();
-//   final itemCol = FirebaseFirestore.instance.collection(COL_ITEMS);
-//
-//   GeoFirePoint center = GeoFirePoint(latLng.latitude, latLng.longitude);
-//   double radius = 50; // unit is km
-//   var field = 'geoFirePoint';
-//
-//   List<DocumentSnapshot<Map<String, dynamic>>> snapshots = await geo
-//       .collection(collectionRef: itemCol)
-//       .within(center: center, radius: radius, field: field)
-//       .first;
-//
-//   List<ItemModel2> items = [];
-//   for (var snapshot in snapshots) {
-//     // ItemModel2 itemModel = ItemModel2.fromSnapshot(snapshot);
-//     ItemModel2 itemModel = ItemModel2.fromJson(snapshot.data()!);
-//     itemModel.itemKey = snapshot.id;
-//     itemModel.reference = snapshot.reference;
-//     //todo: remove my own item
-//     // print(
-//     //     'myUserKey[${userKey}], itemUserKey[${itemModel.userKey}][${itemModel.geoFirePoint.latitude}][${itemModel.geoFirePoint.longitude}]');
-//     if (itemModel.userKey != userKey) {
-//       items.add(itemModel);
-//     }
-//   }
-//
-//   return items;
-// }
+  Future<List<ItemModel2>> getNearByItems(String userKey, LatLng latLng) async {
+    // GeoFlutterFire is an open-source library that allows you to store
+    // and query firestore documents based on their geographic location.
+    final geo = Geoflutterfire();
+    final itemCol = FirebaseFirestore.instance.collection(COL_ITEMS);
+
+    GeoFirePoint center = GeoFirePoint(latLng.latitude, latLng.longitude);
+    double radius = 2; // unit is km
+    var field = 'geoFirePoint';
+
+    // within - Stream, first - Future,
+    List<DocumentSnapshot<Map<String, dynamic>>> snapshots = await geo
+        .collection(collectionRef: itemCol)
+        .within(center: center, radius: radius, field: field)
+        .first;
+
+    List<ItemModel2> items = [];
+    for (var snapshot in snapshots) {
+      // ItemModel2 itemModel = ItemModel2.fromSnapshot(snapshot);
+      ItemModel2 itemModel = ItemModel2.fromJson(snapshot.data()!);
+      itemModel.itemKey = snapshot.id;
+      itemModel.reference = snapshot.reference;
+      //todo: remove my own item
+      // print(
+      //     'myUserKey[${userKey}], itemUserKey[${itemModel.userKey}][${itemModel.geoFirePoint.latitude}][${itemModel.geoFirePoint.longitude}]');
+      if (itemModel.userKey != userKey) {
+        items.add(itemModel);
+      }
+    }
+
+    return items;
+  }
 }
