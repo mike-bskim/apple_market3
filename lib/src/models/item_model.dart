@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'dart:convert';
@@ -50,6 +52,7 @@ class ItemModel2 {
   GeoFirePoint geoFirePoint;
   DateTime createdDate;
   DocumentReference? reference;
+  Uint8List? iconBytes;
 
   ItemModel2({
     required this.itemKey,
@@ -65,6 +68,7 @@ class ItemModel2 {
     required this.geoFirePoint,
     required this.createdDate,
     this.reference,
+    this.iconBytes,
   });
 
   factory ItemModel2.fromJson(Map<String, dynamic> json) => ItemModel2(

@@ -1,9 +1,11 @@
+import 'package:apple_market3/src/screens/near/google_map_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../constants/data_keys.dart';
+import '../states/user_controller.dart';
 import '../widgets/expandable_fab.dart';
 import 'home/items_screen.dart';
 
@@ -77,10 +79,11 @@ class _MainScreenState extends State<MainScreen> {
         index: _bottomSelectedIndex,
         children: <Widget>[
           const ItemsScreen(),
+          (UserController.to.userModel.value == null)
+              ? Container()
+              : GoogleMapScreen(UserController.to.userModel.value!),
           Container(color: Colors.accents[1]),
           Container(color: Colors.accents[3]),
-          Container(color: Colors.accents[5]),
-          Container(color: Colors.accents[7]),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

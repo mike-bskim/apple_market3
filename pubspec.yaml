@@ -57,6 +57,7 @@ dependencies:
   flutter_form_builder: ^7.6.0
   form_builder_validators: ^8.3.0
   smooth_page_indicator: ^1.0.0+2
+  google_maps_flutter: ^2.1.12
 
 dev_dependencies:
   flutter_test:
