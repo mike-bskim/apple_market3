@@ -129,8 +129,8 @@ class ItemService {
       itemModel.itemKey = snapshot.id;
       itemModel.reference = snapshot.reference;
       String imgUrl = itemModel.imageDownloadUrls[0];
-      itemModel.iconBytes =
-      (await NetworkAssetBundle(Uri.parse(imgUrl)).load(imgUrl)).buffer.asUint8List();
+      itemModel.iconBytes = await getBytesFromNetwork(imgUrl: imgUrl, width: 48);
+      // (await NetworkAssetBundle(Uri.parse(imgUrl)).load(imgUrl)).buffer.asUint8List();
       //todo: remove my own item, 내가 등록한 게시글 제외,
       if (itemModel.userKey != userKey) {
         items.add(itemModel);
@@ -140,17 +140,23 @@ class ItemService {
     return items;
   }
 
-  //asset 만 적용 가능,
-  Future<Uint8List> getBytesFromAsset({required String path,required int width})async {
+  // 이미지 사이즈 변경 가능, for asset ,
+  Future<Uint8List> getBytesFromAsset({required String path, required int width}) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(
-        data.buffer.asUint8List(),
-        targetWidth: width
-    );
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(
-        format: ui.ImageByteFormat.png))!
-        .buffer.asUint8List();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   }
 
+  // 이미지 사이즈 변경 가능, for networkImage
+  Future<Uint8List> getBytesFromNetwork({required String imgUrl, required int width}) async {
+    ByteData data = await NetworkAssetBundle(Uri.parse(imgUrl)).load(imgUrl);
+    ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: width,
+      targetHeight: width,
+    );
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  }
 }

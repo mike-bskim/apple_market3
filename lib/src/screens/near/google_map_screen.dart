@@ -1,15 +1,13 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:apple_market3/src/models/user_model.dart';
-import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../../keys.dart';
+import '../../constants/data_keys.dart';
 import '../../models/item_model.dart';
 import '../../repo/item_service.dart';
 import '../../utils/logger.dart';
@@ -41,16 +39,25 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       ),
       zoom: 14,
     );
-    userMarker = Marker(
-      markerId: const MarkerId('myInitPosition'),
-      position: LatLng(
+
+    userMarker = setMarker(
+      latLng: LatLng(
         widget._userModel.geoFirePoint.latitude,
         widget._userModel.geoFirePoint.longitude,
       ),
-      infoWindow: const InfoWindow(title: 'My Position', snippet: 'Where am I?'),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      color: BitmapDescriptor.hueBlue,
     );
     _markers.add(userMarker);
+
+  }
+
+  Marker setMarker({required LatLng latLng, required double color}) {
+    return Marker(
+      markerId: const MarkerId('myInitPosition'),
+      position: latLng,
+      infoWindow: const InfoWindow(title: 'My Position', snippet: 'Where am I?'),
+      icon: BitmapDescriptor.defaultMarkerWithHue(color),
+    );
   }
 
   // 마커 위치/색상 설정, x/y 자표로 입력
@@ -108,6 +115,18 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     );
   }
 
+  // 해당 기능은 item_service 로 이동, getNearByItems 내부에 포함시킴,
+  Future<LatLng> getCenter() async {
+    final GoogleMapController controller = await _controller.future;
+    LatLngBounds visibleRegion = await controller.getVisibleRegion();
+    LatLng centerLatLng = LatLng(
+      (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) / 2,
+      (visibleRegion.northeast.longitude + visibleRegion.southwest.longitude) / 2,
+    );
+
+    return centerLatLng;
+  }
+
   void _onMapCreated(GoogleMapController controller) {
     // 이제 이 콘트롤을 프로그램애서 사용하기 위한 준비 완료.
     _controller.complete(controller);
@@ -145,6 +164,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       widget._userModel.geoFirePoint.longitude,
     );
 
+
     return Scaffold(
       body: FutureBuilder<List<ItemModel2>>(
           future: ItemService().getNearByItems(widget._userModel.userKey, myLatLng),
@@ -152,6 +172,8 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
             List<Widget> nearByItems = [];
             _markers.clear();
             _markers.add(userMarker);
+            // _markers.add(setMarker(latLng: _currentCenter, color: BitmapDescriptor.hueOrange));
+
             if (snapshot.hasData) {
               for (var item in snapshot.data!) {
                 // final offset = transformer
@@ -169,8 +191,17 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                       title: item.title,
                       snippet: 'test',
                     ),
-                    // icon: BitmapDescriptor.fromBytes(item.iconBytes!,
-                    //     size: const Size(16.0, 16.0)), //Icon for Marker
+                    icon: BitmapDescriptor.fromBytes(item.iconBytes!,
+                        size: const Size(16.0, 16.0)), //Icon for Marker
+                    onTap: (){
+                      logger.d('Marker clicked:[${item.title}]');
+                      Get.toNamed(
+                          ROUTE_ITEM_DETAIL,
+                          arguments: {'itemKey': item.itemKey},
+                          // 같은 페이지는 호출시, 중복방지가 기본설정인, false 하면 중복 호출 가능,
+                          preventDuplicates: false
+                      );
+                    }
                   ),
                 );
               }
@@ -191,7 +222,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                   child: Column(
                     children: <Widget>[
                       FloatingActionButton.extended(
-                        heroTag: 'btn1',
+                        heroTag: 'btn_googleMap',
                         label: Text('$_googleMapType'),
                         icon: const Icon(Icons.map),
                         elevation: 8,
@@ -201,6 +232,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                     ],
                   ),
                 ),
+                // _buildMarkerWidget(const Offset(100, 100)),
               ],
             );
           }),
