@@ -7,6 +7,7 @@ import '../constants/data_keys.dart';
 import '../states/user_controller.dart';
 import '../widgets/expandable_fab.dart';
 import 'home/items_screen.dart';
+import 'near/google_map_screen.dart';
 import 'near/map_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -88,6 +89,9 @@ class _MainScreenState extends State<MainScreen> {
           (UserController.to.userModel.value == null)
               ? Container()
               : MapScreen(UserController.to.userModel.value!),
+          (UserController.to.userModel.value == null)
+              ? Container()
+              : GoogleMapScreen(UserController.to.userModel.value!),
           Container(color: Colors.accents[3]),
           Container(color: Colors.accents[5]),
           Container(color: Colors.accents[7]),
@@ -123,13 +127,19 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: ImageIcon(AssetImage(_bottomSelectedIndex == 2
+                ? 'assets/imgs/near-me_filled.png'
+                : 'assets/imgs/near-me.png')),
+            label: 'near2',
+          ),
+          BottomNavigationBarItem(
+            icon: ImageIcon(AssetImage(_bottomSelectedIndex == 3
                 ? 'assets/imgs/chat_filled.png'
                 : 'assets/imgs/chat.png')),
             label: 'chat',
           ),
           BottomNavigationBarItem(
             // backgroundColor: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
-            icon: ImageIcon(AssetImage(_bottomSelectedIndex == 3
+            icon: ImageIcon(AssetImage(_bottomSelectedIndex == 4
                 ? 'assets/imgs/user_filled.png'
                 : 'assets/imgs/user.png')),
             label: 'me',

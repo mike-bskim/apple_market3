@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart' show NetworkAssetBundle, rootBundle;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:latlng/latlng.dart';
@@ -61,10 +65,10 @@ class ItemService {
     logger.d('getItems/userKey[' + userKey.toString() + ']');
     CollectionReference<Map<String, dynamic>> collectionReference =
         FirebaseFirestore.instance.collection(COL_ITEMS);
-    // collection.get() is Future, collection.snapshots() is Stream
-    // 모든 게시글 가져오기
+    // // collection.get() is Future, collection.snapshots() is Stream
+    // // 모든 게시글 가져오기
     QuerySnapshot<Map<String, dynamic>> snapshots = await collectionReference.get();
-    // 자신의 게시글 제외하고 가져오기
+    // // 자신의 게시글 제외하고 가져오기
     // QuerySnapshot<Map<String, dynamic>> snapshots =
     //     await collectionReference.where(DOC_USERKEY, isNotEqualTo: userKey).get();
 
@@ -78,7 +82,6 @@ class ItemService {
       itemModel.itemKey = snapshot.id;
       items.add(itemModel);
     }
-
     return items;
   }
 
@@ -98,8 +101,6 @@ class ItemService {
         items.add(itemModel);
       }
     }
-
-    // logger.d(items[0].toJson());
     return items;
   }
 
@@ -113,7 +114,7 @@ class ItemService {
     double radius = 2; // unit is km
     var field = 'geoFirePoint';
 
-    // within - Stream, first - Future,
+    // within - 리턴 타입 Stream, first - 리턴 타입 Future,
     List<DocumentSnapshot<Map<String, dynamic>>> snapshots = await geo
         .collection(collectionRef: itemCol)
         .within(center: center, radius: radius, field: field)
@@ -134,5 +135,61 @@ class ItemService {
     }
 
     return items;
+  }
+
+  Future<List<ItemModel2>> getNearByItemsGoogle(String userKey, LatLng latLng) async {
+    // GeoFlutterFire is an open-source library that allows you to store
+    // and query firestore documents based on their geographic location.
+    final geo = Geoflutterfire();
+    final itemCol = FirebaseFirestore.instance.collection(COL_ITEMS);
+
+    GeoFirePoint center = GeoFirePoint(latLng.latitude, latLng.longitude);
+    double radius = 2; // unit is km
+    var field = 'geoFirePoint';
+
+    // within - 리턴 타입 Stream, first - 리턴 타입 Future,
+    List<DocumentSnapshot<Map<String, dynamic>>> snapshots = await geo
+        .collection(collectionRef: itemCol)
+        .within(center: center, radius: radius, field: field)
+        .first;
+
+    List<ItemModel2> items = [];
+    for (var snapshot in snapshots) {
+      // ItemModel2 itemModel = ItemModel2.fromSnapshot(snapshot);
+      ItemModel2 itemModel = ItemModel2.fromJson(snapshot.data()!);
+      itemModel.itemKey = snapshot.id;
+      itemModel.reference = snapshot.reference;
+      String imgUrl = itemModel.imageDownloadUrls[0];
+      itemModel.iconBytes = await getBytesFromNetwork(imgUrl: imgUrl, width: 48);
+      // (await NetworkAssetBundle(Uri.parse(imgUrl)).load(imgUrl)).buffer.asUint8List();
+      //todo: remove my own item
+      // print(
+      //     'myUserKey[${userKey}], itemUserKey[${itemModel.userKey}][${itemModel.geoFirePoint.latitude}][${itemModel.geoFirePoint.longitude}]');
+      if (itemModel.userKey != userKey) {
+        items.add(itemModel);
+      }
+    }
+
+    return items;
+  }
+
+  // 이미지 사이즈 변경 가능, for asset ,
+  Future<Uint8List> getBytesFromAsset({required String path, required int width}) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  }
+
+  // 이미지 사이즈 변경 가능, for networkImage
+  Future<Uint8List> getBytesFromNetwork({required String imgUrl, required int width}) async {
+    ByteData data = await NetworkAssetBundle(Uri.parse(imgUrl)).load(imgUrl);
+    ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: width,
+      targetHeight: width,
+    );
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   }
 }

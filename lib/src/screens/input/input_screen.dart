@@ -12,7 +12,6 @@ import '../../constants/data_keys.dart';
 import '../../models/item_model.dart';
 import '../../repo/image_storage.dart';
 import '../../repo/item_service.dart';
-import '../../utils/logger.dart';
 import '../../states/user_controller.dart';
 import '../../states/category_controller.dart';
 import '../../states/select_image_controller.dart';
