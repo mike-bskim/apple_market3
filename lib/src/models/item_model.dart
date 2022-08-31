@@ -72,16 +72,16 @@ class ItemModel2 {
   });
 
   factory ItemModel2.fromJson(Map<String, dynamic> json) => ItemModel2(
-        itemKey: json["itemKey"] ?? '',
-        userKey: json["userKey"] ?? '',
-        userPhone: json["userPhone"] ?? '',
-        imageDownloadUrls: List<String>.from(json["imageDownloadUrls"].map((x) => x)),
-        title: json["title"] ?? '',
-        category: json["category"] ?? 'none',
-        price: json["price"] ?? 0,
-        negotiable: json["negotiable"] ?? false,
-        detail: json["detail"] ?? '',
-        address: json["address"] ?? '',
+        itemKey: json[DOC_ITEMKEY] ?? '',
+        userKey: json[DOC_USERKEY] ?? '',
+        userPhone: json[DOC_USERPHONE] ?? '',
+        imageDownloadUrls: List<String>.from(json[DOC_IMAGEDOWNLOADURLS].map((x) => x)),
+        title: json[DOC_TITLE] ?? '',
+        category: json[DOC_CATEGORY] ?? 'none',
+        price: json[DOC_PRICE] ?? 0,
+        negotiable: json[DOC_NEGOTIABLE] ?? false,
+        detail: json[DOC_DETAIL] ?? '',
+        address: json[DOC_ADDRESS] ?? '',
         geoFirePoint: json[DOC_GEOFIREPOINT] == null
             ? GeoFirePoint(0, 0)
             : GeoFirePoint((json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).latitude,
@@ -93,26 +93,26 @@ class ItemModel2 {
       );
 
   Map<String, dynamic> toJson() => {
-        "itemKey": itemKey,
-        "userKey": userKey,
-        "userPhone": userPhone,
-        "imageDownloadUrls": List<dynamic>.from(imageDownloadUrls.map((x) => x)),
-        "title": title,
-        "category": category,
-        "price": price,
-        "negotiable": negotiable,
-        "detail": detail,
-        "address": address,
-        "geoFirePoint": geoFirePoint.data,
-        "createdDate": createdDate,
+        DOC_ITEMKEY: itemKey,
+        DOC_USERKEY: userKey,
+        DOC_USERPHONE: userPhone,
+        DOC_IMAGEDOWNLOADURLS: List<dynamic>.from(imageDownloadUrls.map((x) => x)),
+        DOC_TITLE: title,
+        DOC_CATEGORY: category,
+        DOC_PRICE: price,
+        DOC_NEGOTIABLE: negotiable,
+        DOC_DETAIL: detail,
+        DOC_ADDRESS: address,
+        DOC_GEOFIREPOINT: geoFirePoint.data,
+        DOC_CREATEDDATE: createdDate,
         // "reference": reference,
       };
 
   Map<String, dynamic> toMinJson() => {
-        "imageDownloadUrls": imageDownloadUrls.sublist(0, 1),
+        DOC_IMAGEDOWNLOADURLS: imageDownloadUrls.sublist(0, 1),
         //List<dynamic>.from(imageDownloadUrls.map((x) => x)),
-        "title": title,
-        "price": price,
+        DOC_TITLE: title,
+        DOC_PRICE: price,
       };
 
   static String generateItemKey(String uid) {

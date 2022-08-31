@@ -69,6 +69,8 @@ class _MainScreenState extends State<MainScreen> {
               // UserController.to.setUserAuth(false);
               // user 상태가 변하면서 스트림이 자동 호출되면서 로그아웃됨
               FirebaseAuth.instance.signOut();
+              //** beamer 에서는 이 부분을 추가해야 로그아웃이 정상적으로 된다
+              // context.beamToNamed('/');
             },
             icon: const Icon(Icons.logout),
           ),

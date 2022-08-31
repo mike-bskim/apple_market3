@@ -107,7 +107,9 @@ class UserModel1 {
         address: json[DOC_ADDRESS],
         lat: json[DOC_LAT],
         lon: json[DOC_LON],
-        geoFirePoint: GeoFirePoint((json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).latitude,
+        geoFirePoint: json[DOC_GEOFIREPOINT] == null
+            ? GeoFirePoint(0, 0)
+            : GeoFirePoint((json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).latitude,
             (json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).longitude),
         createdDate: json[DOC_CREATEDDATE] == null
             ? DateTime.now().toUtc()
