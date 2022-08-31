@@ -213,7 +213,7 @@ class _InputScreenState extends State<InputScreen> {
                   ListTile(
                     onTap: () {
                       debugPrint('/LOCATION_INPUT/LOCATION_CATEGORY_INPUT');
-                      Get.toNamed(ROUTE_CATEGORY_INPUT);
+                      Get.toNamed('/$ROUTE_CATEGORY_INPUT');
                     },
                     dense: true,
                     title: Obx(() {

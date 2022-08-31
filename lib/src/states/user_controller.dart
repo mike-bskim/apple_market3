@@ -41,7 +41,7 @@ class UserController extends GetxController {
       // user 정보가 변경되면, 호출됨,
       debugPrint('************************* (UserController/listen)');
       _user.value = user;
-      Get.offAllNamed(ROUTE_MAIN);
+      Get.offAllNamed('/');
       await _setNewUser(user);
       logger.d('(_setNewUser/listen) user status - $_user.value');
     });

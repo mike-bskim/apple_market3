@@ -13,6 +13,8 @@ A new Flutter project.
 (2022-08-23) fix price not appearing bug with regular expression
 (2022-08-24) zoom in:out the map
 (2022-08-25) generate items for geo query test
+(2022-08-26~30) map & google_map_flutter
+(2022-08-31) create chatroom
 
 
 유저위치, 전화번호, 주소, 프로파일 이미지,

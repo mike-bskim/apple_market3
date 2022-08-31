@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
         children: <Widget>[
           MaterialButton(
             onPressed: () {
-              Get.toNamed(ROUTE_INPUT);
+              Get.toNamed('/$ROUTE_INPUT');
             },
             shape: const CircleBorder(),
             height: 48,

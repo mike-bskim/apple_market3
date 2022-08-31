@@ -16,7 +16,7 @@ class SimilarItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         Get.toNamed(
-            ROUTE_ITEM_DETAIL,
+            '/$ROUTE_ITEM_DETAIL',
             arguments: {'itemKey': _itemModel.itemKey},
             // 같은 페이지는 호출시, 중복방지가 기본설정인, false 하면 중복 호출 가능,
             preventDuplicates: false

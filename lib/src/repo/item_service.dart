@@ -67,10 +67,10 @@ class ItemService {
         FirebaseFirestore.instance.collection(COL_ITEMS);
     // // collection.get() is Future, collection.snapshots() is Stream
     // // 모든 게시글 가져오기
-    QuerySnapshot<Map<String, dynamic>> snapshots = await collectionReference.get();
+    // QuerySnapshot<Map<String, dynamic>> snapshots = await collectionReference.get();
     // // 자신의 게시글 제외하고 가져오기
-    // QuerySnapshot<Map<String, dynamic>> snapshots =
-    //     await collectionReference.where(DOC_USERKEY, isNotEqualTo: userKey).get();
+    QuerySnapshot<Map<String, dynamic>> snapshots =
+        await collectionReference.where(DOC_USERKEY, isNotEqualTo: userKey).get();
 
     List<ItemModel2> items = [];
 

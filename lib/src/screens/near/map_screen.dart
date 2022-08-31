@@ -92,7 +92,7 @@ class _MapScreenState extends State<MapScreen> {
       child: InkWell(
         onTap: () {
           debugPrint('${itemModel.userKey}, ${itemModel.title}, distance :[$distance]');
-          Get.toNamed(ROUTE_ITEM_DETAIL,
+          Get.toNamed('/$ROUTE_ITEM_DETAIL',
               arguments: {'itemKey': itemModel.itemKey},
               // 같은 페이지는 호출시, 중복방지가 기본설정인, false 하면 중복 호출 가능,
               preventDuplicates: false);

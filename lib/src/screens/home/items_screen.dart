@@ -70,7 +70,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
           //InkWell
           onTap: () {
             debugPrint('call Item detail page[$index/${_item.itemKey}]');
-            Get.toNamed(ROUTE_ITEM_DETAIL, arguments: {'itemKey': _item.itemKey});
+            Get.toNamed('/$ROUTE_ITEM_DETAIL', arguments: {'itemKey': _item.itemKey});
           },
           child: SizedBox(
             height: imgSize,
