@@ -4,7 +4,6 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../constants/data_keys.dart';
 import '../constants/shared_pref_key.dart';
 import '../models/user_model.dart';
 import '../repo/user_service.dart';

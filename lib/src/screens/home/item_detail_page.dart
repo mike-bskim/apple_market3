@@ -6,8 +6,11 @@ import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../constants/common_size.dart';
+import '../../constants/data_keys.dart';
+import '../../models/chatroom_model.dart';
 import '../../models/item_model.dart';
 import '../../models/user_model.dart';
+import '../../repo/chat_service.dart';
 import '../../repo/item_service.dart';
 
 import '../../states/category_controller.dart';
@@ -88,33 +91,36 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     super.dispose();
   }
 
-  // void _goToChatroom(ItemModel2 itemModel, UserModel1 userModel) async {
-  //   String chatroomKey =
-  //   ChatroomModel.generateChatRoomKey(userModel.userKey, newItemKey);
-  //   logger.d({
-  //     'buyerKey' : '[${userModel.userKey}]',
-  //     'sellerKey' : '[${itemModel.userKey}]',
-  //     'newItemKey' : '[$newItemKey]'
-  //   });
-  //
-  //   ChatroomModel _chatroomModel = ChatroomModel(
-  //     itemImage: itemModel.imageDownloadUrls[0],
-  //     itemTitle: itemModel.title,
-  //     itemKey: newItemKey,
-  //     itemAddress: itemModel.address,
-  //     itemPrice: itemModel.price,
-  //     sellerKey: itemModel.userKey,
-  //     buyerKey: userModel.userKey,
-  //     sellerImage: 'https://minimaltoolkit.com/images/randomdata/male/101.jpg',
-  //     buyerImage: 'https://minimaltoolkit.com/images/randomdata/female/41.jpg',
-  //     geoFirePoint: itemModel.geoFirePoint,
-  //     chatroomKey: chatroomKey,
-  //     lastMsgTime: DateTime.now(),
-  //   );
-  //   await ChatService().createNewChatroom(_chatroomModel);
-  //
-  //   context.beamToNamed('/$LOCATION_ITEM/:$newItemKey/:$chatroomKey');
-  // }
+  void _goToChatroom(ItemModel2 itemModel, UserModel1 userModel) async {
+    String chatroomKey =
+        ChatroomModel2.generateChatRoomKey(buyer: userModel.userKey, itemKey: newItemKey);
+    logger.d({
+      'buyerKey': '[${userModel.userKey}]',
+      'sellerKey': '[${itemModel.userKey}]',
+      'newItemKey': '[$newItemKey]',
+      'itemKey': '[${itemModel.itemKey}]',
+    });
+
+    ChatroomModel2 _chatroomModel = ChatroomModel2(
+      itemImage: itemModel.imageDownloadUrls[0],
+      itemTitle: itemModel.title,
+      itemKey: newItemKey,
+      itemAddress: itemModel.address,
+      itemPrice: itemModel.price,
+      sellerKey: itemModel.userKey,
+      buyerKey: userModel.userKey,
+      sellerImage: 'https://minimaltoolkit.com/images/randomdata/male/101.jpg',
+      buyerImage: 'https://minimaltoolkit.com/images/randomdata/female/41.jpg',
+      geoFirePoint: itemModel.geoFirePoint,
+      chatroomKey: chatroomKey,
+      lastMsgTime: DateTime.now().toUtc(),
+    );
+    await ChatService().createNewChatroom(_chatroomModel);
+
+    // context.beamToNamed('/$LOCATION_ITEM/:$newItemKey/:$chatroomKey');
+    // Get.toNamed("/user/1424?name=Flutter&age=22");
+    Get.toNamed("/$ROUTE_ITEM_DETAIL/$newItemKey");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +198,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                               Expanded(child: Container()),
                               TextButton(
                                 onPressed: () {
-                                  // _goToChatroom(itemModel, userModel);
+                                  _goToChatroom(itemModel, userModel);
                                 },
                                 child: const Text('채팅으로 거래하기'),
                               ),
@@ -217,7 +223,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                             // SliverToBoxAdapter 로 각각 처리할수도 있고,
                             // SliverList 를 이용하여 리스트 형식으로도 처리 가능,
                             delegate: SliverChildListDelegate([
-                              _userSection(userModel),
+                              _userSection(itemModel),
                               _divider(padding_16 * 2 + 1),
                               Text(
                                 itemModel.title,
@@ -298,8 +304,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                         // ),
                         SliverToBoxAdapter(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: padding_16),
+                            padding: const EdgeInsets.symmetric(horizontal: padding_16),
                             // 판매자의 다른 상품 보기
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -397,6 +402,12 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                     child: Scaffold(
                       backgroundColor: Colors.transparent,
                       appBar: AppBar(
+                        centerTitle: true,
+                        title: Text(
+                          'User ID : [${userModel.phoneNumber}]',
+                          style: TextStyle(
+                              color: isAppbarCollapsed ? Colors.black87 : Colors.transparent),
+                        ),
                         shadowColor: Colors.transparent,
                         backgroundColor: isAppbarCollapsed ? Colors.white : Colors.transparent,
                         foregroundColor: isAppbarCollapsed ? Colors.black87 : Colors.white,
@@ -464,11 +475,11 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     );
   }
 
-  Widget _userSection(UserModel1 _userModel) {
-    int phoneCnt = _userModel.phoneNumber.length;
+  Widget _userSection(ItemModel2 _itemModel) {
+    int phoneCnt = _itemModel.userPhone.length;
     //[서울특별시, 용산구, xxx길, 11, (xxx2가)]
     //[서울특별시, 중구, 태평로x가, xx]
-    List _address = _userModel.address.split(' ');
+    List _address = _itemModel.address.split(' ');
     String _detail = _address[_address.length - 1];
     String _location = '';
 
@@ -495,7 +506,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
             // crossAxisAlignment: CrossAxisAlignment.auth,
             children: [
               Text(
-                _userModel.phoneNumber.substring(phoneCnt - 4).toString(),
+                _itemModel.userPhone.substring(phoneCnt - 4).toString(),
                 style: Theme.of(context).textTheme.bodyText1,
               ),
               Text(
