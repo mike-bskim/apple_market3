@@ -1,6 +1,13 @@
+import 'package:apple_market3/src/states/user_controller.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
+import '../../models/chat_model.dart';
+import '../../models/user_model.dart';
+import '../../repo/chat_service.dart';
 import '../../utils/logger.dart';
 
 class ChatroomScreen extends StatefulWidget {
@@ -11,15 +18,245 @@ class ChatroomScreen extends StatefulWidget {
 }
 
 class _ChatroomScreenState extends State<ChatroomScreen> {
+  late String chatroomKey;
+  final TextEditingController _textEditingController = TextEditingController();
+  // late final ChatController chatController;
+
+  // late ChatNotifier _chatNotifier;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // newChatroomKey = widget.chatroomKey;
+    chatroomKey = Get.parameters['chatroomKey']!;
+    // chatController = Get.put(ChatController(chatroomKey));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     logger.d('${Get.parameters['chatroomKey']}');
+    UserModel1 userModel = UserController.to.userModel.value!;
+    // List<ChatModel2> _chatList = ChatController.to.chatList;
+
     return Scaffold(
       appBar: AppBar(),
-      body: Container(
-        color: Colors.yellowAccent,
-        alignment: Alignment.center,
-        child: Text('${Get.parameters['chatroomKey']}'),
+      backgroundColor: Colors.grey[200],
+      // 화면 하단의 메뉴바 때문에 SafeArea 로 wrapping 해야 오동작을 방지함.
+      body: SafeArea(
+        child: Column(
+          children: [
+            // 게시글 정보를 간략히 표시
+            _buildItemInfo(context),
+            // 채팅 메시지 표시 부분
+            Expanded(
+              child: Obx(
+                () => Container(
+                  color: Colors.white,
+                  // child: ListView.separated(
+                  //   shrinkWrap: true,
+                  //   reverse: true,
+                  //   padding: const EdgeInsets.all(16),
+                  //   itemBuilder: (context, index) {
+                  //     bool _isMine = _chatList[index].userKey == userModel.userKey;
+                  //     return ListTile(
+                  //       dense: true,
+                  //       title: Text(_chatList[index].msg),
+                  //       contentPadding: EdgeInsets.zero,
+                  //       horizontalTitleGap: 0.0,
+                  //       visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                  //       minVerticalPadding: 0,
+                  //     );
+                  //     // return Chat(
+                  //     //   size: _size,
+                  //     //   isMine: _isMine,
+                  //     //   chatModel: chatNotifier.chatList[index],
+                  //     // );
+                  //   },
+                  //   separatorBuilder: (context, index) {
+                  //     return const SizedBox(
+                  //       height: 12,
+                  //     );
+                  //   },
+                  //   itemCount: _chatList.length, //chatNotifier.chatList.length,
+                  // ),
+                ),
+              ),
+            ),
+            const Padding(padding: EdgeInsets.all(4)),
+            // 메시지 입력 창
+            _buildInputBar(userModel)
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 컬럼내부에 리스트타일(높이 관련 오류가 있어서 나중에 row+column 조함으로 변경함)과 버튼으로 구성 예정
+  MaterialBanner _buildItemInfo(BuildContext context) {
+    return MaterialBanner(
+      // 공간 조절을 위해서 패딩을 수정함
+      padding: EdgeInsets.zero,
+      leadingPadding: EdgeInsets.zero,
+      // actions 는 빈칸
+      actions: [Container()],
+      // content 에만 위젯을 넣어서 표시 예정임.
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8),
+                child:
+                    // chatroomModel == null
+                    //     ? Shimmer.fromColors(
+                    //         highlightColor: Colors.grey[200]!,
+                    //         baseColor: Colors.grey,
+                    //         child: Container(
+                    //           width: 48,
+                    //           height: 48,
+                    //           color: Colors.white,
+                    //         ),
+                    //       )
+                    //     :
+                    ExtendedImage.network(
+                  // chatroomModel.itemImage,
+                  'https://randomuser.me/api/portraits/lego/4.jpg', // lego pic
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                        text: '거래완료',
+                        style: Theme.of(context).textTheme.bodyText1,
+                        children: [
+                          TextSpan(
+                              // text: chatroomModel == null ? '' : ' ' + chatroomModel.itemTitle,
+                              text: ' 복숭아 떨이',
+                              style: Theme.of(context).textTheme.bodyText2)
+                        ]),
+                  ),
+                  RichText(
+                    text: TextSpan(
+                        // text: chatroomModel == null
+                        //     ? ''
+                        //     : chatroomModel.itemPrice
+                        //         .toCurrencyString(mantissaLength: 0, trailingSymbol: '원'),
+                        text: '30,000원',
+                        style: Theme.of(context).textTheme.bodyText1,
+                        children: [
+                          TextSpan(
+                              text: ' (가격제한불가)',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(color: Colors.black26))
+                        ]),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 8),
+            // 버튼 사이즈를 줄이기 위해서 SizedBox 추가
+            child: SizedBox(
+              height: 32,
+              child: TextButton.icon(
+                onPressed: () {
+                  debugPrint('후기남기기 클릭~~');
+                },
+                icon: const Icon(
+                  Icons.edit,
+                  // 버튼 사이즈를 줄이기 위해서 size 추가 설정,
+                  size: 16,
+                  color: Colors.black87,
+                ),
+                label: Text(
+                  '후기 남기기',
+                  style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black87),
+                ),
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    side: BorderSide(color: Colors.grey[300]!, width: 2),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputBar(UserModel1 userModel) {
+    return SizedBox(
+      height: 48,
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.add,
+              color: Colors.grey,
+            ),
+          ),
+          Expanded(
+            child: TextFormField(
+              controller: _textEditingController,
+              decoration: InputDecoration(
+                hintText: '메시지를 입력하세요',
+                // 메시지 입력박스를 조금 작게 줄임,
+                isDense: true,
+                // fillColor & filled 동시에 설정해야함.
+                fillColor: Colors.white,
+                filled: true,
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    logger.d('Icon clicked');
+                  },
+                  child: const Icon(
+                    Icons.emoji_emotions_outlined,
+                    color: Colors.grey,
+                  ),
+                ),
+                // 아이콘때문에 입력 박스가 커져서 줄여줌 설정,
+                suffixIconConstraints: BoxConstraints.tight(const Size(40, 40)),
+                // 입력 박스의 패딩 공간을 줄임, 미설정시 16쯤 됨,
+                contentPadding: const EdgeInsets.all(10),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.redAccent),
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () async {
+              ChatModel2 chatModel = ChatModel2(
+                userKey: userModel.userKey,
+                msg: _textEditingController.text,
+                createdDate: DateTime.now().toUtc(),
+              );
+
+              await ChatService().createNewChat(chatroomKey, chatModel);
+              logger.d(_textEditingController.text.toString());
+              _textEditingController.clear();
+            },
+            icon: const Icon(
+              Icons.send,
+              color: Colors.grey,
+            ),
+          )
+        ],
       ),
     );
   }

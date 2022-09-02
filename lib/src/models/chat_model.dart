@@ -19,14 +19,14 @@ ChatModel2 chatModel2FromJson(String str) => ChatModel2.fromJson(json.decode(str
 String chatModel2ToJson(ChatModel2 data) => json.encode(data.toJson());
 
 class ChatModel2 {
-  String chatKey;
+  String? chatKey; // 자동생성되므로 ? 처리
   String msg;
-  String createdDate;
+  DateTime createdDate;
   String userKey;
   DocumentReference? reference;
 
   ChatModel2({
-    required this.chatKey,
+    // required this.chatKey, // 자동생성되므로 필수처리 제외.
     required this.msg,
     required this.createdDate,
     required this.userKey,
@@ -34,15 +34,17 @@ class ChatModel2 {
   });
 
   factory ChatModel2.fromJson(Map<String, dynamic> json) => ChatModel2(
-    chatKey: json[DOC_CHATKEY],
+    // chatKey: json[DOC_CHATKEY], // 자동생성되므로 필수처리 제외.
     msg: json[DOC_MSG],
-    createdDate: json[DOC_CREATEDDATE],
+    createdDate: json[DOC_CREATEDDATE] == null
+        ? DateTime.now().toUtc()
+        : (json[DOC_CREATEDDATE] as Timestamp).toDate(),
     userKey: json[DOC_USERKEY],
     // reference: json["reference"],
   );
 
   Map<String, dynamic> toJson() => {
-    DOC_CHATKEY: chatKey,
+    // DOC_CHATKEY: chatKey, // 자동생성되므로 필수처리 제외.
     DOC_MSG: msg,
     DOC_CREATEDDATE: createdDate,
     DOC_USERKEY: userKey,

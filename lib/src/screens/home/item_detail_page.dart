@@ -119,7 +119,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
 
     // context.beamToNamed('/$LOCATION_ITEM/:$newItemKey/:$chatroomKey');
     // Get.toNamed("/user/1424?name=Flutter&age=22");
-    Get.toNamed("/$ROUTE_ITEM_DETAIL/$newItemKey");
+    Get.toNamed("/$ROUTE_ITEM_DETAIL/$chatroomKey");
   }
 
   @override
