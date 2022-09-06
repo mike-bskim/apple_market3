@@ -35,11 +35,11 @@ class ChatModel2 {
 
   factory ChatModel2.fromJson(Map<String, dynamic> json) => ChatModel2(
     // chatKey: json[DOC_CHATKEY], // 자동생성되므로 필수처리 제외.
-    msg: json[DOC_MSG],
+    msg: json[DOC_MSG] ?? '',
     createdDate: json[DOC_CREATEDDATE] == null
         ? DateTime.now().toUtc()
         : (json[DOC_CREATEDDATE] as Timestamp).toDate(),
-    userKey: json[DOC_USERKEY],
+    userKey: json[DOC_USERKEY] ?? '',
     // reference: json["reference"],
   );
 

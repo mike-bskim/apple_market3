@@ -1,14 +1,16 @@
-import 'package:apple_market3/src/states/user_controller.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:intl/intl.dart';
 
 import '../../models/chat_model.dart';
+import '../../models/chatroom_model.dart';
 import '../../models/user_model.dart';
 import '../../repo/chat_service.dart';
+import '../../states/chat_controller.dart';
+import '../../states/user_controller.dart';
 import '../../utils/logger.dart';
+import 'chat.dart';
 
 class ChatroomScreen extends StatefulWidget {
   const ChatroomScreen({Key? key}) : super(key: key);
@@ -20,24 +22,25 @@ class ChatroomScreen extends StatefulWidget {
 class _ChatroomScreenState extends State<ChatroomScreen> {
   late String chatroomKey;
   final TextEditingController _textEditingController = TextEditingController();
-  // late final ChatController chatController;
+  late final ChatController chatController;
 
   // late ChatNotifier _chatNotifier;
 
   @override
   void initState() {
     // TODO: implement initState
-    // newChatroomKey = widget.chatroomKey;
     chatroomKey = Get.parameters['chatroomKey']!;
-    // chatController = Get.put(ChatController(chatroomKey));
+    chatController = Get.put(ChatController(chatroomKey));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    logger.d('${Get.parameters['chatroomKey']}');
+    // logger.d('${Get.parameters['chatroomKey']}');
+    Size _size = MediaQuery.of(context).size;
     UserModel1 userModel = UserController.to.userModel.value!;
-    // List<ChatModel2> _chatList = ChatController.to.chatList;
+    List<ChatModel2> _chatList = ChatController.to.chatList;
+    Rxn<ChatroomModel2> chatroomModel = ChatController.to.chatroomModel;
 
     return Scaffold(
       appBar: AppBar(),
@@ -52,34 +55,43 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
             Expanded(
               child: Obx(
                 () => Container(
-                  color: Colors.white,
-                  // child: ListView.separated(
-                  //   shrinkWrap: true,
-                  //   reverse: true,
-                  //   padding: const EdgeInsets.all(16),
-                  //   itemBuilder: (context, index) {
-                  //     bool _isMine = _chatList[index].userKey == userModel.userKey;
-                  //     return ListTile(
-                  //       dense: true,
-                  //       title: Text(_chatList[index].msg),
-                  //       contentPadding: EdgeInsets.zero,
-                  //       horizontalTitleGap: 0.0,
-                  //       visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                  //       minVerticalPadding: 0,
-                  //     );
-                  //     // return Chat(
-                  //     //   size: _size,
-                  //     //   isMine: _isMine,
-                  //     //   chatModel: chatNotifier.chatList[index],
-                  //     // );
-                  //   },
-                  //   separatorBuilder: (context, index) {
-                  //     return const SizedBox(
-                  //       height: 12,
-                  //     );
-                  //   },
-                  //   itemCount: _chatList.length, //chatNotifier.chatList.length,
-                  // ),
+                  // color: Colors.yellowAccent,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    // 최신 메시지가 아래에 위치하게 설정,
+                    reverse: true,
+                    padding: const EdgeInsets.all(16),
+                    itemBuilder: (context, index) {
+                      bool _isMine = _chatList[index].userKey == userModel.userKey;
+                      return ListTile(
+                        dense: true,
+                        title: Text(_chatList[index].msg +
+                            ' - ' +
+                            DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate)),
+                        // subtitle: Text(chatroomModel.value!.lastMsg),
+                        contentPadding: EdgeInsets.zero,
+                        horizontalTitleGap: 0.0,
+                        visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                        minVerticalPadding: 0,
+                      );
+                      // return Chat(
+                      //   size: _size,
+                      //   isMine: _isMine,
+                      //   chatModel: _chatList[index], //chatNotifier.chatList[index],
+                      // );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          // child: Text(
+                          //   DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate),
+                          // ),
+                        ),
+                      );
+                    },
+                    itemCount: _chatList.length, //chatNotifier.chatList.length,
+                  ),
                 ),
               ),
             ),
@@ -248,6 +260,8 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
               );
 
               await ChatService().createNewChat(chatroomKey, chatModel);
+              // Obs 처리하여 삭제시에도 바로 반영된다. 그래서 삭제시 화면에 바로 반영되서 기존것으로 원복함.
+              // ChatController.to.addNewChat(chatModel);
               logger.d(_textEditingController.text.toString());
               _textEditingController.clear();
             },

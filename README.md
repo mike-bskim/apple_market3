@@ -15,8 +15,10 @@ A new Flutter project.
 (2022-08-25) generate items for geo query test
 (2022-08-26~30) map & google_map_flutter
 (2022-08-31) create chatroom
-(2022-09-1) chat screen bottom bar(데코레이션 설정이 많이 들어감 참고용 좋음),
-(2022-09-1) chat screen item info
+(2022-09-01) chat screen bottom bar(데코레이션 설정이 많이 들어감 참고용 좋음),
+(2022-09-01) chat screen item info
+(2022-09-06) send msg to firestore
+
 
 
 유저위치, 전화번호, 주소, 프로파일 이미지,
