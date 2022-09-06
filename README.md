@@ -17,7 +17,7 @@ A new Flutter project.
 (2022-08-31) create chatroom
 (2022-09-01) chat screen bottom bar(데코레이션 설정이 많이 들어감 참고용 좋음),
 (2022-09-01) chat screen item info
-(2022-09-06) send msg to firestore
+(2022-09-06) usable chat function
 
 
 

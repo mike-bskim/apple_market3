@@ -10,7 +10,8 @@ class ChatController extends GetxController {
 
   final String _chatroomKey;
   // 형선언을 직접해줘야 오류가 발생하지 않음
-  final RxList<ChatModel2> _chatList = <ChatModel2>[].obs;
+  // final RxList<ChatModel2> _chatList = <ChatModel2>[].obs;
+  final List<ChatModel2> _chatList = <ChatModel2>[];
   final Rxn<ChatroomModel2> _chatroomModel = Rxn<ChatroomModel2>();
 
   // 형선언을 직접해줘야 오류가 발생하지 않음
@@ -36,6 +37,7 @@ class ChatController extends GetxController {
         // todo: fetch 10 latest chats, if chat list is empty
         ChatService().getChatList(_chatroomKey).then((chatList) {
           _chatList.addAll(chatList);
+          update();
           // _chatList.addAll(chatList.reversed);
           // notifyListeners();
         });
@@ -47,6 +49,7 @@ class ChatController extends GetxController {
         }
         ChatService().getLatestChats(_chatroomKey, _chatList[0].reference!).then((latestChats) {
           _chatList.insertAll(0, latestChats);
+          update();
           // _chatList.addAll(latestChats.reversed);
           // notifyListeners();
         });
@@ -58,6 +61,7 @@ class ChatController extends GetxController {
     // logger.d('chatroomKey>>>' + chatroomKey.toString());
 
     _chatList.insert(0, chatModel);
+    update();
 
     ChatService().createNewChat(_chatroomKey, chatModel);
     // ChatService().createNewChat(chatroomKey, chatModel);

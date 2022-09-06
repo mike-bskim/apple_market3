@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
       return const Text('Error Occur');
       } else if (snapshot.hasData) {
     // } else if (snapshot.connectionState == ConnectionState.done) {
-      logger.d('data is ${snapshot.data.toString()}');
+    //   logger.d('data is ${snapshot.data.toString()}');
       return AppleApp();
     } else {
       return const SplashScreen();

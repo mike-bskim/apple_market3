@@ -39,7 +39,7 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
     // logger.d('${Get.parameters['chatroomKey']}');
     Size _size = MediaQuery.of(context).size;
     UserModel1 userModel = UserController.to.userModel.value!;
-    List<ChatModel2> _chatList = ChatController.to.chatList;
+    // List<ChatModel2> _chatList = ChatController.to.chatList;
     Rxn<ChatroomModel2> chatroomModel = ChatController.to.chatroomModel;
 
     return Scaffold(
@@ -53,51 +53,53 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
             _buildItemInfo(context),
             // 채팅 메시지 표시 부분
             Expanded(
-              child: Obx(
-                () => Container(
-                  // color: Colors.yellowAccent,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    // 최신 메시지가 아래에 위치하게 설정,
-                    reverse: true,
-                    padding: const EdgeInsets.all(16),
-                    itemBuilder: (context, index) {
-                      bool _isMine = _chatList[index].userKey == userModel.userKey;
-                      // return ListTile(
-                      //   dense: true,
-                      //   title: Text(_chatList[index].msg +
-                      //       ' - ' +
-                      //       DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate)),
-                      //   // subtitle: Text(chatroomModel.value!.lastMsg),
-                      //   contentPadding: EdgeInsets.zero,
-                      //   horizontalTitleGap: 0.0,
-                      //   visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                      //   minVerticalPadding: 0,
-                      // );
-                      return Chat(
-                        size: _size,
-                        isMine: _isMine,
-                        chatModel: _chatList[index], //chatNotifier.chatList[index],
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      if (DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate) ==
-                          DateFormat('yyyy-MM-dd').format(_chatList[index + 1].createdDate)) {
-                        return const SizedBox(height: 12);
-                      } else {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate),
-                            ),
-                          ),
+              child: GetBuilder<ChatController>(
+                builder: (controller){
+                  return Container(
+                    // color: Colors.yellowAccent,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      // 최신 메시지가 아래에 위치하게 설정,
+                      reverse: true,
+                      padding: const EdgeInsets.all(16),
+                      itemBuilder: (context, index) {
+                        bool _isMine = controller.chatList[index].userKey == userModel.userKey;
+                        // return ListTile(
+                        //   dense: true,
+                        //   title: Text(_chatList[index].msg +
+                        //       ' - ' +
+                        //       DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate)),
+                        //   // subtitle: Text(chatroomModel.value!.lastMsg),
+                        //   contentPadding: EdgeInsets.zero,
+                        //   horizontalTitleGap: 0.0,
+                        //   visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                        //   minVerticalPadding: 0,
+                        // );
+                        return Chat(
+                          size: _size,
+                          isMine: _isMine,
+                          chatModel: controller.chatList[index], //chatNotifier.chatList[index],
                         );
-                      }
-                    },
-                    itemCount: _chatList.length, //chatNotifier.chatList.length,
-                  ),
-                ),
+                      },
+                      separatorBuilder: (context, index) {
+                        if (DateFormat('yyyy-MM-dd').format(controller.chatList[index].createdDate) ==
+                            DateFormat('yyyy-MM-dd').format(controller.chatList[index + 1].createdDate)) {
+                          return const SizedBox(height: 12);
+                        } else {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                DateFormat('yyyy-MM-dd').format(controller.chatList[index].createdDate),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      itemCount: controller.chatList.length, //chatNotifier.chatList.length,
+                    ),
+                  );
+                },
               ),
             ),
             const Padding(padding: EdgeInsets.all(4)),
@@ -261,13 +263,13 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
               ChatModel2 chatModel = ChatModel2(
                 userKey: userModel.userKey,
                 msg: _textEditingController.text,
-                createdDate: DateTime.now().toUtc(),
+                createdDate: DateTime.now(), // addNewChat->toJson 에서 toUtc() 재처리함.
               );
 
-              await ChatService().createNewChat(chatroomKey, chatModel);
+              // await ChatService().createNewChat(chatroomKey, chatModel);
               // Obs 처리하여 삭제시에도 바로 반영된다. 그래서 삭제시 화면에 바로 반영되서 기존것으로 원복함.
-              // ChatController.to.addNewChat(chatModel);
-              logger.d(_textEditingController.text.toString());
+              ChatController.to.addNewChat(chatModel);
+              // logger.d(_textEditingController.text.toString());
               _textEditingController.clear();
             },
             icon: const Icon(

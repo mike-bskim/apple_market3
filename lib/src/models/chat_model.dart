@@ -46,7 +46,7 @@ class ChatModel2 {
   Map<String, dynamic> toJson() => {
     // DOC_CHATKEY: chatKey, // 자동생성되므로 필수처리 제외.
     DOC_MSG: msg,
-    DOC_CREATEDDATE: createdDate,
+    DOC_CREATEDDATE: createdDate.toUtc(),
     DOC_USERKEY: userKey,
     // "reference": reference,
   };

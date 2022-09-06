@@ -57,7 +57,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
     //   // String orgItemKey = widget.itemKey;
     //   newItemKey = Get.arguments['itemKey'].substring(1);
     // }
-    logger.d('$_size!.width, $kToolbarHeight, $_statusBarHeight, ${isAppbarCollapsed.toString()}');
+    // logger.d('$_size!.width, $kToolbarHeight, $_statusBarHeight, ${isAppbarCollapsed.toString()}');
 
     // 스크롤이 발생할때 마다 addListener 가 실행됨,
     _scrollController.addListener(() {
@@ -94,12 +94,12 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   void _goToChatroom(ItemModel2 itemModel, UserModel1 userModel) async {
     String chatroomKey =
         ChatroomModel2.generateChatRoomKey(buyer: userModel.userKey, itemKey: newItemKey);
-    logger.d({
-      'buyerKey': '[${userModel.userKey}]',
-      'sellerKey': '[${itemModel.userKey}]',
-      'newItemKey': '[$newItemKey]',
-      'itemKey': '[${itemModel.itemKey}]',
-    });
+    // logger.d({
+    //   'buyerKey': '[${userModel.userKey}]',
+    //   'sellerKey': '[${itemModel.userKey}]',
+    //   'newItemKey': '[$newItemKey]',
+    //   'itemKey': '[${itemModel.itemKey}]',
+    // });
 
     ChatroomModel2 _chatroomModel = ChatroomModel2(
       itemImage: itemModel.imageDownloadUrls[0],
@@ -124,7 +124,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    logger.d('item detail screen >> build >>> [$newItemKey]');
+    // logger.d('item detail screen >> build >>> [$newItemKey]');
 
     return FutureBuilder<ItemModel2>(
       future: ItemService().getItem(newItemKey),
