@@ -42,6 +42,7 @@ class ChatController extends GetxController {
       } else {
         // todo: when new chatroom arrive, fetch latest chats
         if (_chatList[0].reference == null) {
+          // 여기서 변경시 화면에 바로 표시되기때문에 addNewChat 사용하지 않기로 함, 또는 Obs 처리 제외할 것,
           _chatList.removeAt(0);
         }
         ChatService().getLatestChats(_chatroomKey, _chatList[0].reference!).then((latestChats) {

@@ -63,32 +63,37 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                     padding: const EdgeInsets.all(16),
                     itemBuilder: (context, index) {
                       bool _isMine = _chatList[index].userKey == userModel.userKey;
-                      return ListTile(
-                        dense: true,
-                        title: Text(_chatList[index].msg +
-                            ' - ' +
-                            DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate)),
-                        // subtitle: Text(chatroomModel.value!.lastMsg),
-                        contentPadding: EdgeInsets.zero,
-                        horizontalTitleGap: 0.0,
-                        visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                        minVerticalPadding: 0,
-                      );
-                      // return Chat(
-                      //   size: _size,
-                      //   isMine: _isMine,
-                      //   chatModel: _chatList[index], //chatNotifier.chatList[index],
+                      // return ListTile(
+                      //   dense: true,
+                      //   title: Text(_chatList[index].msg +
+                      //       ' - ' +
+                      //       DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate)),
+                      //   // subtitle: Text(chatroomModel.value!.lastMsg),
+                      //   contentPadding: EdgeInsets.zero,
+                      //   horizontalTitleGap: 0.0,
+                      //   visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                      //   minVerticalPadding: 0,
                       // );
+                      return Chat(
+                        size: _size,
+                        isMine: _isMine,
+                        chatModel: _chatList[index], //chatNotifier.chatList[index],
+                      );
                     },
                     separatorBuilder: (context, index) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          // child: Text(
-                          //   DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate),
-                          // ),
-                        ),
-                      );
+                      if (DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate) ==
+                          DateFormat('yyyy-MM-dd').format(_chatList[index + 1].createdDate)) {
+                        return const SizedBox(height: 12);
+                      } else {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate),
+                            ),
+                          ),
+                        );
+                      }
                     },
                     itemCount: _chatList.length, //chatNotifier.chatList.length,
                   ),
