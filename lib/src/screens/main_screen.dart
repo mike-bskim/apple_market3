@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../constants/data_keys.dart';
 import '../states/user_controller.dart';
 import '../widgets/expandable_fab.dart';
+import 'chat/chat_list_page.dart';
 import 'home/items_screen.dart';
 import 'near/google_map_screen.dart';
 import 'near/map_screen.dart';
@@ -94,9 +95,11 @@ class _MainScreenState extends State<MainScreen> {
           (UserController.to.userModel.value == null)
               ? Container()
               : GoogleMapScreen(UserController.to.userModel.value!),
+          (UserController.to.userModel.value == null)
+              ? Container()
+              : ChatListPage(userKey: UserController.to.userModel.value!.userKey),
           Container(color: Colors.accents[3]),
           Container(color: Colors.accents[5]),
-          Container(color: Colors.accents[7]),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

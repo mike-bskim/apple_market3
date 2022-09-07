@@ -43,6 +43,7 @@ class ChatroomModel2 {
   DateTime lastMsgTime;
   String lastMsgUserKey;
   String chatroomKey;
+  bool negotiable;
   DocumentReference? reference;
 
   ChatroomModel2({
@@ -60,46 +61,51 @@ class ChatroomModel2 {
     required this.lastMsgTime,
     this.lastMsgUserKey = '',
     required this.chatroomKey,
+    required this.negotiable,
     this.reference,
   });
 
   factory ChatroomModel2.fromJson(Map<String, dynamic> json) => ChatroomModel2(
-      itemImage: json[DOC_ITEMIMAGE] ?? '',
-      itemTitle: json[DOC_ITEMTITLE] ?? '',
-      itemKey: json[DOC_ITEMKEY] ?? '',
-      itemAddress: json[DOC_ITEMADDRESS] ?? '',
-      itemPrice: json[DOC_ITEMPRICE] ?? 0,
-      sellerKey: json[DOC_SELLERKEY] ?? '',
-      buyerKey: json[DOC_BUYERKEY] ?? '',
-      sellerImage: json[DOC_SELLERIMAGE] ?? '',
-      buyerImage: json[DOC_BUYERIMAGE] ?? '',
-      geoFirePoint: json[DOC_GEOFIREPOINT] == null
-          ? GeoFirePoint(0, 0)
-          : GeoFirePoint((json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).latitude,
-              (json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).longitude),
-      lastMsg: json[DOC_LASTMSG] ?? '',
-      lastMsgTime: json[DOC_LASTMSGTIME] == null
-          ? DateTime.now().toUtc()
-          : (json[DOC_LASTMSGTIME] as Timestamp).toDate(),
-      lastMsgUserKey: json[DOC_LASTMSGUSERKEY] ?? '',
-      chatroomKey: json[DOC_CHATROOMKEY] ?? '');
+        itemImage: json[DOC_ITEMIMAGE] ?? '',
+        itemTitle: json[DOC_ITEMTITLE] ?? '',
+        itemKey: json[DOC_ITEMKEY] ?? '',
+        itemAddress: json[DOC_ITEMADDRESS] ?? '',
+        itemPrice: json[DOC_ITEMPRICE] ?? 0,
+        sellerKey: json[DOC_SELLERKEY] ?? '',
+        buyerKey: json[DOC_BUYERKEY] ?? '',
+        sellerImage: json[DOC_SELLERIMAGE] ?? '',
+        buyerImage: json[DOC_BUYERIMAGE] ?? '',
+        geoFirePoint: json[DOC_GEOFIREPOINT] == null
+            ? GeoFirePoint(0, 0)
+            : GeoFirePoint((json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).latitude,
+                (json[DOC_GEOFIREPOINT][DOC_GEOPOINT]).longitude),
+        lastMsg: json[DOC_LASTMSG] ?? '',
+        lastMsgTime: json[DOC_LASTMSGTIME] == null
+            ? DateTime.now().toUtc()
+            : (json[DOC_LASTMSGTIME] as Timestamp).toDate(),
+        lastMsgUserKey: json[DOC_LASTMSGUSERKEY] ?? '',
+        chatroomKey: json[DOC_CHATROOMKEY] ?? '',
+        negotiable: json[DOC_NEGOTIABLE] ?? false,
+      );
 
   Map<String, dynamic> toJson() => {
-        DOC_ITEMIMAGE : itemImage,
-        DOC_ITEMTITLE : itemTitle,
-        DOC_ITEMKEY : itemKey,
-        DOC_ITEMADDRESS : itemAddress,
-        DOC_ITEMPRICE : itemPrice,
-        DOC_SELLERKEY : sellerKey,
-        DOC_BUYERKEY : buyerKey,
-        DOC_SELLERIMAGE : sellerImage,
-        DOC_BUYERIMAGE : buyerImage,
-        DOC_GEOFIREPOINT : geoFirePoint.data,
-        DOC_LASTMSG : lastMsg,
-        DOC_LASTMSGTIME : lastMsgTime,
-        DOC_LASTMSGUSERKEY : lastMsgUserKey,
-        DOC_CHATROOMKEY : chatroomKey,
+        DOC_ITEMIMAGE: itemImage,
+        DOC_ITEMTITLE: itemTitle,
+        DOC_ITEMKEY: itemKey,
+        DOC_ITEMADDRESS: itemAddress,
+        DOC_ITEMPRICE: itemPrice,
+        DOC_SELLERKEY: sellerKey,
+        DOC_BUYERKEY: buyerKey,
+        DOC_SELLERIMAGE: sellerImage,
+        DOC_BUYERIMAGE: buyerImage,
+        DOC_GEOFIREPOINT: geoFirePoint.data,
+        DOC_LASTMSG: lastMsg,
+        DOC_LASTMSGTIME: lastMsgTime,
+        DOC_LASTMSGUSERKEY: lastMsgUserKey,
+        DOC_CHATROOMKEY: chatroomKey,
+        DOC_NEGOTIABLE: negotiable,
       };
+
   // ChatroomModel2.fromQuerySnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
   //     : this.fromJson(snapshot.data(), snapshot.id, snapshot.reference);
   //
@@ -109,7 +115,6 @@ class ChatroomModel2 {
   static String generateChatRoomKey({required String buyer, required String itemKey}) {
     return '${itemKey}_$buyer';
   }
-
 }
 
 // class ChatroomModel {

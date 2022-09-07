@@ -1,12 +1,13 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../models/chat_model.dart';
 import '../../models/chatroom_model.dart';
 import '../../models/user_model.dart';
-import '../../repo/chat_service.dart';
 import '../../states/chat_controller.dart';
 import '../../states/user_controller.dart';
 import '../../utils/logger.dart';
@@ -31,6 +32,7 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
     // TODO: implement initState
     chatroomKey = Get.parameters['chatroomKey']!;
     chatController = Get.put(ChatController(chatroomKey));
+    logger.d(chatroomKey);
     super.initState();
   }
 
@@ -40,79 +42,82 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
     Size _size = MediaQuery.of(context).size;
     UserModel1 userModel = UserController.to.userModel.value!;
     // List<ChatModel2> _chatList = ChatController.to.chatList;
-    Rxn<ChatroomModel2> chatroomModel = ChatController.to.chatroomModel;
+    // Rxn<ChatroomModel2> chatroomModel = ChatController.to.chatroomModel;
 
-    return Scaffold(
-      appBar: AppBar(),
-      backgroundColor: Colors.grey[200],
-      // 화면 하단의 메뉴바 때문에 SafeArea 로 wrapping 해야 오동작을 방지함.
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 게시글 정보를 간략히 표시
-            _buildItemInfo(context),
-            // 채팅 메시지 표시 부분
-            Expanded(
-              child: GetBuilder<ChatController>(
-                builder: (controller){
-                  return Container(
-                    // color: Colors.yellowAccent,
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      // 최신 메시지가 아래에 위치하게 설정,
-                      reverse: true,
-                      padding: const EdgeInsets.all(16),
-                      itemBuilder: (context, index) {
-                        bool _isMine = controller.chatList[index].userKey == userModel.userKey;
-                        // return ListTile(
-                        //   dense: true,
-                        //   title: Text(_chatList[index].msg +
-                        //       ' - ' +
-                        //       DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate)),
-                        //   // subtitle: Text(chatroomModel.value!.lastMsg),
-                        //   contentPadding: EdgeInsets.zero,
-                        //   horizontalTitleGap: 0.0,
-                        //   visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                        //   minVerticalPadding: 0,
-                        // );
-                        return Chat(
-                          size: _size,
-                          isMine: _isMine,
-                          chatModel: controller.chatList[index], //chatNotifier.chatList[index],
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        if (DateFormat('yyyy-MM-dd').format(controller.chatList[index].createdDate) ==
-                            DateFormat('yyyy-MM-dd').format(controller.chatList[index + 1].createdDate)) {
-                          return const SizedBox(height: 12);
-                        } else {
-                          return Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                DateFormat('yyyy-MM-dd').format(controller.chatList[index].createdDate),
-                              ),
+    // ChatController 내부의 chatList, chatroomModel 변수를 접근하기 위해서,
+    return GetBuilder<ChatController>(
+      builder: (controller) {
+        return Scaffold(
+          appBar: AppBar(),
+          backgroundColor: Colors.grey[200],
+          // 화면 하단의 메뉴바 때문에 SafeArea 로 wrapping 해야 오동작을 방지함.
+          body: SafeArea(
+            child: Column(
+              children: [
+                // 게시글 정보를 간략히 표시
+                _buildItemInfo(context),
+                // 채팅 메시지 표시 부분
+                Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    // 최신 메시지가 아래에 위치하게 설정,
+                    reverse: true,
+                    padding: const EdgeInsets.all(16),
+                    itemBuilder: (context, index) {
+                      bool _isMine = controller.chatList[index].userKey == userModel.userKey;
+                      // return ListTile(
+                      //   dense: true,
+                      //   title: Text(_chatList[index].msg +
+                      //       ' - ' +
+                      //       DateFormat('yyyy-MM-dd').format(_chatList[index].createdDate)),
+                      //   // subtitle: Text(chatroomModel.value!.lastMsg),
+                      //   contentPadding: EdgeInsets.zero,
+                      //   horizontalTitleGap: 0.0,
+                      //   visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                      //   minVerticalPadding: 0,
+                      // );
+                      return Chat(
+                        size: _size,
+                        isMine: _isMine,
+                        chatModel: controller.chatList[index], //chatNotifier.chatList[index],
+                      );
+                    },
+                    // 날짜가 다르면 디바이터 대신 일장 정보를 표시하게 함,
+                    separatorBuilder: (context, index) {
+                      if (DateFormat('yyyy-MM-dd').format(controller.chatList[index].createdDate) ==
+                          DateFormat('yyyy-MM-dd')
+                              .format(controller.chatList[index + 1].createdDate)) {
+                        return const SizedBox(height: 12);
+                      } else {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              DateFormat('yyyy-MM-dd')
+                                  .format(controller.chatList[index].createdDate),
                             ),
-                          );
-                        }
-                      },
-                      itemCount: controller.chatList.length, //chatNotifier.chatList.length,
-                    ),
-                  );
-                },
-              ),
+                          ),
+                        );
+                      }
+                    },
+                    itemCount: controller.chatList.length, //chatNotifier.chatList.length,
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.all(4)),
+                // 메시지 입력 창
+                _buildInputBar(userModel)
+              ],
             ),
-            const Padding(padding: EdgeInsets.all(4)),
-            // 메시지 입력 창
-            _buildInputBar(userModel)
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   // 컬럼내부에 리스트타일(높이 관련 오류가 있어서 나중에 row+column 조함으로 변경함)과 버튼으로 구성 예정
   MaterialBanner _buildItemInfo(BuildContext context) {
+    Rxn<ChatroomModel2> _chatroomModel = ChatController.to.chatroomModel;
+
     return MaterialBanner(
       // 공간 조절을 위해서 패딩을 수정함
       padding: EdgeInsets.zero,
@@ -127,55 +132,69 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8),
-                child:
-                    // chatroomModel == null
-                    //     ? Shimmer.fromColors(
-                    //         highlightColor: Colors.grey[200]!,
-                    //         baseColor: Colors.grey,
-                    //         child: Container(
-                    //           width: 48,
-                    //           height: 48,
-                    //           color: Colors.white,
-                    //         ),
-                    //       )
-                    //     :
-                    ExtendedImage.network(
-                  // chatroomModel.itemImage,
-                  'https://randomuser.me/api/portraits/lego/4.jpg', // lego pic
-                  width: 48,
-                  height: 48,
-                  fit: BoxFit.cover,
-                ),
+                child: _chatroomModel.value == null
+                    ? Shimmer.fromColors(
+                        highlightColor: Colors.grey[200]!,
+                        baseColor: Colors.grey,
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          color: Colors.white,
+                        ),
+                      )
+                    : ExtendedImage.network(
+                        _chatroomModel.value!.itemImage,
+                        width: 48,
+                        height: 48,
+                        fit: BoxFit.cover,
+                      ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RichText(
+                    // todo: 거래완료 여부 확인 필드 추가
                     text: TextSpan(
                         text: '거래완료',
                         style: Theme.of(context).textTheme.bodyText1,
                         children: [
                           TextSpan(
-                              // text: chatroomModel == null ? '' : ' ' + chatroomModel.itemTitle,
-                              text: ' 복숭아 떨이',
+                              text: _chatroomModel.value == null
+                                  ? ''
+                                  : ' ' + _chatroomModel.value!.itemTitle,
+                              // text: ' 복숭아 떨이',
                               style: Theme.of(context).textTheme.bodyText2)
                         ]),
                   ),
                   RichText(
                     text: TextSpan(
-                        // text: chatroomModel == null
-                        //     ? ''
-                        //     : chatroomModel.itemPrice
-                        //         .toCurrencyString(mantissaLength: 0, trailingSymbol: '원'),
-                        text: '30,000원',
+                        text: _chatroomModel.value == null
+                            ? ''
+                            : _chatroomModel.value!.itemPrice
+                                .toCurrencyString(mantissaLength: 0, trailingSymbol: '원'),
                         style: Theme.of(context).textTheme.bodyText1,
                         children: [
                           TextSpan(
-                              text: ' (가격제한불가)',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(color: Colors.black26))
+                            text: _chatroomModel.value == null
+                                ? ''
+                                : _chatroomModel.value!.negotiable
+                                    ? '  (가격제안가능)'
+                                    : '  (가격제안불가)',
+                            style: _chatroomModel.value == null
+                                ? Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .copyWith(color: Colors.black26)
+                                : _chatroomModel.value!.negotiable
+                                    ? Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(color: Colors.blue)
+                                    : Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .copyWith(color: Colors.black26),
+                          )
                         ]),
                   ),
                 ],

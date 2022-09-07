@@ -114,6 +114,7 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       geoFirePoint: itemModel.geoFirePoint,
       chatroomKey: chatroomKey,
       lastMsgTime: DateTime.now().toUtc(),
+      negotiable: itemModel.negotiable,
     );
     await ChatService().createNewChatroom(_chatroomModel);
 

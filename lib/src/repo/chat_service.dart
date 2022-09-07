@@ -9,7 +9,9 @@ import '../models/chatroom_model.dart';
 class ChatService {
 // 싱글톤 패턴 적용
   static final ChatService _chatService = ChatService._internal();
+
   factory ChatService() => _chatService;
+
   ChatService._internal();
 
 // 채팅룸을 만드는 함수
@@ -18,7 +20,7 @@ class ChatService {
         buyer: chatroomModel.buyerKey, itemKey: chatroomModel.itemKey);
 
     DocumentReference<Map<String, dynamic>> docRef =
-    FirebaseFirestore.instance.collection(COL_CHATROOMS).doc(chatroomKey);
+        FirebaseFirestore.instance.collection(COL_CHATROOMS).doc(chatroomKey);
 
     final DocumentSnapshot documentSnapshot = await docRef.get();
 
@@ -38,7 +40,7 @@ class ChatService {
         .doc();
 
     DocumentReference<Map<String, dynamic>> chatroomDocRef =
-    FirebaseFirestore.instance.collection(COL_CHATROOMS).doc(chatroomKey);
+        FirebaseFirestore.instance.collection(COL_CHATROOMS).doc(chatroomKey);
 
     // await chatDocRef.set(chatModel.toJson());
 
@@ -63,15 +65,15 @@ class ChatService {
   // DocumentSnapshot<Map<String, dynamic>> 받는 값을 의미.
   // ChatroomModel2 출력 결과를 의미.
   var snapshotToChatroom =
-  StreamTransformer<DocumentSnapshot<Map<String, dynamic>>, ChatroomModel2>.fromHandlers(
-      handleData: (snapshot, sink) {
-        // ChatroomModel chatroom = ChatroomModel.fromSnapshot(snapshot);
-        ChatroomModel2 chatroom = ChatroomModel2.fromJson(snapshot.data()!);
-        chatroom.chatroomKey = snapshot.id;
-        chatroom.reference = snapshot.reference;
+      StreamTransformer<DocumentSnapshot<Map<String, dynamic>>, ChatroomModel2>.fromHandlers(
+          handleData: (snapshot, sink) {
+    // ChatroomModel chatroom = ChatroomModel.fromSnapshot(snapshot);
+    ChatroomModel2 chatroom = ChatroomModel2.fromJson(snapshot.data()!);
+    chatroom.chatroomKey = snapshot.id;
+    chatroom.reference = snapshot.reference;
 
-        sink.add(chatroom);
-      });
+    sink.add(chatroom);
+  });
 
   Stream<ChatroomModel2> connectChatroom(String chatroomKey) {
     // transform 통해서 DocumentSnapshot 을 ChatroomModel2 로 변환이 필요함
@@ -112,7 +114,7 @@ class ChatService {
         .doc(chatroomKey)
         .collection(COL_CHATS)
         .orderBy(DOC_CREATEDDATE, descending: true)
-    // .endAtDocument(await currentLatestChatRef.get())
+        // .endAtDocument(await currentLatestChatRef.get())
         .endBeforeDocument(await currentLatestChatRef.get())
         .get();
 
@@ -152,36 +154,37 @@ class ChatService {
     return chatList;
   }
 
-// Future<List<ChatroomModel2>> getMyChatList(String myUserKey) async {
-//   List<ChatroomModel2> chatrooms = [];
-//
-//   // todo: I am as a buyer
-//   QuerySnapshot<Map<String, dynamic>> buying = await FirebaseFirestore.instance
-//       .collection(COL_CHATROOMS)
-//       .where(DOC_BUYERKEY, isEqualTo: myUserKey)
-//       .get();
-//
-//   // todo: I am as a seller
-//   QuerySnapshot<Map<String, dynamic>> selling = await FirebaseFirestore.instance
-//       .collection(COL_CHATROOMS)
-//       .where(DOC_SELLERKEY, isEqualTo: myUserKey)
-//       .get();
-//
-//   for (var documentSnapshot in buying.docs) {
-//     ChatroomModel2 chatroom = ChatroomModel2.fromJson(documentSnapshot.data());
-//     chatroom.chatroomKey = documentSnapshot.id;
-//     chatroom.reference = documentSnapshot.reference;
-//     chatrooms.add(chatroom);
-//   }
-//   for (var documentSnapshot in selling.docs) {
-//     ChatroomModel2 chatroom = ChatroomModel2.fromJson(documentSnapshot.data());
-//     chatroom.chatroomKey = documentSnapshot.id;
-//     chatroom.reference = documentSnapshot.reference;
-//     chatrooms.add(chatroom);
-//   }
-//
-//   chatrooms.sort((a, b) => (a.lastMsgTime).compareTo(b.lastMsgTime));
-//
-//   return chatrooms;
-// }
+  Future<List<ChatroomModel2>> getMyChatList(String myUserKey) async {
+    List<ChatroomModel2> chatrooms = [];
+
+    // todo: I am as a buyer
+    QuerySnapshot<Map<String, dynamic>> buying = await FirebaseFirestore.instance
+        .collection(COL_CHATROOMS)
+        .where(DOC_BUYERKEY, isEqualTo: myUserKey)
+        .get();
+
+    // todo: I am as a seller
+    QuerySnapshot<Map<String, dynamic>> selling = await FirebaseFirestore.instance
+        .collection(COL_CHATROOMS)
+        .where(DOC_SELLERKEY, isEqualTo: myUserKey)
+        .get();
+
+    for (var documentSnapshot in buying.docs) {
+      ChatroomModel2 chatroom = ChatroomModel2.fromJson(documentSnapshot.data());
+      chatroom.chatroomKey = documentSnapshot.id;
+      chatroom.reference = documentSnapshot.reference;
+      chatrooms.add(chatroom);
+    }
+    for (var documentSnapshot in selling.docs) {
+      ChatroomModel2 chatroom = ChatroomModel2.fromJson(documentSnapshot.data());
+      chatroom.chatroomKey = documentSnapshot.id;
+      chatroom.reference = documentSnapshot.reference;
+      chatrooms.add(chatroom);
+    }
+
+    // 정렬하는 기능,
+    chatrooms.sort((a, b) => (b.lastMsgTime).compareTo(a.lastMsgTime));
+
+    return chatrooms;
+  }
 }
